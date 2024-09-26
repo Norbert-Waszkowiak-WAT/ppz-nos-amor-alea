@@ -1,57 +1,57 @@
-1. Creatio
+1. Tytuł: Creatio
+  
 2. Skład zespołu
 Klasa 3c:
-•	Filip Faron
-•	Mateusz Bobek
-•	Grzegorz Bliźniuk
-•	Agnieszka Suchenia
+  •	Filip Faron
+  •	Mateusz Bobek
+  •	Grzegorz Bliźniuk
+  •	Agnieszka Suchenia
 3. Cel główny projektu
-Głównym celem gry jest rekreacja oraz jednoczesna edukacja gracza o historii ewolucji człowieka.
-Grupą docelową są wszyscy.
+  Głównym celem gry jest rekreacja oraz jednoczesna edukacja gracza o historii ewolucji człowieka.
+  Grupą docelową są wszyscy.
 4. Zakres funkcjonalności
 MVP:
-•	System zapisu
-•	System postępu
+  •	System zapisu
+  •	System postępu
 5. Technologie
 Języki programowania:
-•	C#
+  •	C#
 Frameworki:
-•	Unity
+  •	Unity
 Narzędzia:
-•	Github (kontrola wersji).
-•	FL Studio (soundtrack)
-•	Pixel Art Studio (Tekstury)
+  •	Github (kontrola wersji).
+  •	FL Studio (soundtrack)
+  •	Pixel Art Studio (Tekstury)
 6. Architektura systemu
 Diagram:
  
 7. Harmonogram prac dla 4 etapów
-Etap 1: Podstawy
-Zadania:
-•	Implementacja sterowania postacią
-•	Implementacja systemu budowania
-•	Tekstury i animcje gracza
-Etap 2: 
-Zadania:
-•	Implementacja ekwipunku gracza
-•	Implementacja funkcjonalności maszyn
-•	Implementacja systemu automatyzacji
-Etap 3: 
-Zadania:
-•	Implementacja walki
-•	Implementacja systemu progresji
-•	Generacja mapy
 
-Etap 4:  
-Zadania:
-•	Bugfixing
-•	Win condition
-•	Soundtrack
+Etap 1: Podstawy
+  •	Implementacja sterowania postacią
+  •	Implementacja systemu budowania
+  •	Tekstury i animcje gracza
+
+Etap 2: Automatyzacja
+  •	Implementacja ekwipunku gracza
+  •	Implementacja funkcjonalności maszyn
+  •	Implementacja systemu automatyzacji
+
+Etap 3: Eksploracja
+  •	Implementacja walki
+  •	Implementacja systemu progresji
+  •	Generacja mapy
+
+Etap 4: Finał
+  •	Bugfixing
+  •	Win condition
+  •	Soundtrack
 
 8. Kryteria sukcesu
-•	Gracz może się poruszać, tworzyć narzędzia i stawiać maszyny
-•	Gra działa
+  •	Gracz może się poruszać, tworzyć narzędzia i stawiać maszyny
+  •	Gra działa
 
 9. Potencjalne ryzyka
-•	możliwe występowanie bugów
-•	problemy z systemem zapisu
+  •	możliwe występowanie bugów
+  •	problemy z systemem zapisu
 
