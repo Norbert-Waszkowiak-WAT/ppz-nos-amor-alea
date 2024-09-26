@@ -4,10 +4,10 @@
 
 Klasa 3c:
 
-    •	Filip Faron
-    •	Mateusz Bobek
-    •	Grzegorz Bliźniuk
-    •	Agnieszka Suchenia
+  * Filip Faron
+  * Mateusz Bobek
+  * Grzegorz Bliźniuk
+  * Agnieszka Suchenia
 
 **3. Cel główny projektu**
 
@@ -16,25 +16,25 @@ Klasa 3c:
 
 **4. Zakres funkcjonalności - MVP:**
 
-  •	System zapisu
-  •	System postępu
+  *	System zapisu
+  *	System postępu
 
 **5. Technologie**
 
 Języki programowania:
 
-  •	C#
+  *	C#
   
 Frameworki:
 
-  •	Unity
+  *	Unity
   
 Narzędzia:
 
-    •	Github (kontrola wersji)
-    •	Visual Studio (skrypty C#)
-    •	FL Studio (soundtrack)
-    •	Pixel Art Studio (Tekstury)
+  *	Github (kontrola wersji)
+  *	Visual Studio (skrypty C#)
+  *	FL Studio (soundtrack)
+  *	Pixel Art Studio (Tekstury)
 
 
 **6. Architektura systemu**
@@ -45,38 +45,38 @@ Diagram: ?
 
   Etap 1: Podstawy
 
-    •	Implementacja sterowania postacią
-    •	Implementacja systemu budowania
-    •	Tekstury i animcje gracza
-    •	Generacja mapy
+  *	Implementacja sterowania postacią
+  *	Implementacja systemu budowania
+  *	Tekstury i animcje gracza
+  *	Generacja mapy
 
 
   Etap 2: Automatyzacja
 
-    •	Implementacja ekwipunku gracza
-    •	Implementacja funkcjonalności maszyn
-    •	Implementacja systemu automatyzacji
+  *	Implementacja ekwipunku gracza
+  *	Implementacja funkcjonalności maszyn
+  *	Implementacja systemu automatyzacji
 
 
   Etap 3: Eksploracja
 
-    •	Implementacja walki
-    •	Implementacja systemu progresji
+  *	Implementacja walki
+  *	Implementacja systemu progresji
 
 
   Etap 4: Finał
   
-    •	Bugfixing
-    •	Win condition
-    •	Soundtrack
+  *	Bugfixing
+  *	Win condition
+  *	Soundtrack
 
 **8. Kryteria sukcesu**
 
-    •	Gracz może się poruszać, tworzyć narzędzia i stawiać maszyny
-    •	Gra działa
+  *	Gracz może się poruszać, tworzyć narzędzia i stawiać maszyny
+  *	Gra działa
 
 **9. Potencjalne ryzyka**
    
-    •	możliwe występowanie bugów
-    •	problemy z systemem zapisu
+    *	możliwe występowanie bugów
+    *	problemy z systemem zapisu
 
