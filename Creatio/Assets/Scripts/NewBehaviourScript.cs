@@ -14,9 +14,4 @@ public class WalkerObject
         Direction = direction;
         ChangeChance = changeChance;
     }
-
-    public Vector2 GetDirection()
-    {
-        return Direction;
-    }
 }

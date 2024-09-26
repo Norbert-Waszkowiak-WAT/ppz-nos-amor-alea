@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class WalkerGenerator : MonoBehaviour
+public class WalkerGeneratorDetailed : MonoBehaviour
 {
     public enum Grid
     {
@@ -13,21 +13,21 @@ public class WalkerGenerator : MonoBehaviour
         EMPTY
     }
 
-    public Grid[,] gridHandler;
-    public List<WalkerObject> Walkers;
-    public Tilemap tileMap;
-    public Tile Grass;
-    public Tile Water;
-    public Tile Sand;
+    private Grid[,] gridHandler;
+    private List<WalkerObject> Walkers;
+    private Tilemap tileMap;
+    private Tile Grass;
+    private Tile Water;
+    private Tile Sand;
 
 
-    public int MapWidth = 32;
-    public int MapHeight = 32;
+    private int MapWidth = 32;
+    private int MapHeight = 32;
 
-    public int MaximumWalkers = 10;
-    public int TileCount = default;
-    public float FillPercent = 0.8f;
-    public float WaitTime = 0.01f;
+    private int MaximumWalkers = 64;
+    private int TileCount = default;
+    private float FillPercent = 0.8f;
+    private float WaitTime = 0.01f;
 
     void Start()
     {
