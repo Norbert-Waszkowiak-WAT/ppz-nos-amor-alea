@@ -11,13 +11,13 @@ Klasa 3c:
 
 **3. Cel główny projektu**
 
-  Głównym celem gry jest rekreacja oraz jednoczesna edukacja gracza o historii ewolucji człowieka.
-  Grupą docelową są wszyscy.
+  Głównym celem projektu jest stworzenie gry typu Factorio, gdzie celem gracza jest eksploatacja zasobów naturalnych by ukończyć "Projekt"
 
 **4. Zakres funkcjonalności - MVP:**
 
   *	System zapisu
-  *	System postępu
+  *	System postępu erowego
+  * Fabuła
 
 **5. Technologie**
 
@@ -32,13 +32,13 @@ Frameworki:
 Narzędzia:
 
   *	Github (kontrola wersji)
-  *	Visual Studio (skrypty C#)
+  *	Visual Studio / Visual Studio Code (skrypty C#)
   *	FL Studio (soundtrack)
   *	Pixel Art Studio (Tekstury)
 
 
 **6. Architektura systemu**
-Diagram: ?
+  Gra oparta na silniku Unity, zapis na dysk
 
  
 **7. Harmonogram prac dla 4 etapów**
@@ -47,36 +47,43 @@ Diagram: ?
 
   *	Implementacja sterowania postacią
   *	Implementacja systemu budowania
-  *	Tekstury i animcje gracza
-  *	Generacja mapy
+  *	Tekstury i animcje postaci oraz budynków
+  *	Mapa
+  *	Zasoby naturalne
 
 
   Etap 2: Automatyzacja
 
   *	Implementacja ekwipunku gracza
   *	Implementacja funkcjonalności maszyn
-  *	Implementacja systemu automatyzacji
+  * Implementacja energii
+  * Implementacja systemu zapisu
+  * Tworzenie tekstur i przepisów części
 
 
   Etap 3: Eksploracja
 
   *	Implementacja walki
   *	Implementacja systemu progresji
+  *	Implementacja fauny oraz AI
 
 
   Etap 4: Finał
   
   *	Bugfixing
-  *	Win condition
+  *	"Projekt" 
   *	Soundtrack
+  *	Fabuła
 
 **8. Kryteria sukcesu**
 
   *	Gracz może się poruszać, tworzyć narzędzia i stawiać maszyny
+  *	Maszyny produkują itemy
+  *	AI fauny działa
   *	Gra działa
 
 **9. Potencjalne ryzyka**
    
-    *	możliwe występowanie bugów
-    *	problemy z systemem zapisu
+  *	możliwe występowanie bugów
+  *	problemy z systemem zapisu
 
