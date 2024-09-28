@@ -54,6 +54,7 @@ Narzędzia:
 
   Etap 2: Automatyzacja
 
+  * Implementacja UI
   *	Implementacja ekwipunku gracza
   *	Implementacja funkcjonalności maszyn
   * Implementacja energii
