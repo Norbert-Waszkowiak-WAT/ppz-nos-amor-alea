@@ -57,8 +57,6 @@ Narzędzia:
   * Implementacja UI
   *	Implementacja ekwipunku gracza
   *	Implementacja funkcjonalności maszyn
-  * Implementacja energii
-  * Implementacja systemu zapisu
   * Tworzenie tekstur i przepisów części
 
 
@@ -67,6 +65,8 @@ Narzędzia:
   *	Implementacja walki
   *	Implementacja systemu progresji
   *	Implementacja fauny oraz AI
+  *	Implementacja energii
+  * Implementacja systemu zapisu
 
 
   Etap 4: Finał
