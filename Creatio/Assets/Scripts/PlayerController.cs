@@ -15,7 +15,8 @@ public class PlayerController : MonoBehaviour
    private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        hologram = null;
+        LayerMask layer2 = LayerMask.NameToLayer("Hologram");
+        Physics2D.IgnoreLayerCollision(0, layer2, true);
     }
 
     // Update is called once per frame
@@ -25,12 +26,6 @@ public class PlayerController : MonoBehaviour
         moveVelocity = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")) * speed;
         moveVelocity = Vector2.ClampMagnitude(moveVelocity, 1);
         rb.velocity = moveVelocity * speed;
-        hologram = buildingManager.hologram;
-
-        if (hologram != null)
-        {  
-            Physics2D.IgnoreCollision(GetComponent<Collider2D>(), hologram.GetComponent<Collider2D>(), true);
-        }
 
         if (moveVelocity.x < 0)
         {
