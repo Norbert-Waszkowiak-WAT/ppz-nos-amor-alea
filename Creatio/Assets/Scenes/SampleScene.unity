@@ -133,12 +133,12 @@ GameObject:
   - component: {fileID: 213723180}
   - component: {fileID: 213723179}
   - component: {fileID: 213723183}
-  m_Layer: 7
-  m_Name: Iron_Ingot
+  m_Layer: 9
+  m_Name: ItemPrefab
   m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!212 &213723179
 SpriteRenderer:
@@ -200,12 +200,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 213723178}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.5, y: 0.5, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.5, y: 1.5, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1793880879}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &213723183
 MonoBehaviour:
@@ -219,52 +219,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 907ba92c8fe84484ca8fae1aeb4c872d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &314914408
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 314914409}
-  - component: {fileID: 314914410}
-  m_Layer: 0
-  m_Name: ConveyorBeltManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &314914409
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 314914408}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1315470461}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &314914410
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 314914408}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 32f9269fb3403804b8ec144146ff0d76, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  beltSegments: []
-  moveSpeed: 1
 --- !u!1 &394311298
 GameObject:
   m_ObjectHideFlags: 0
@@ -280,7 +234,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!156049354 &394311299
 Grid:
@@ -303,12 +257,12 @@ Transform:
   m_GameObject: {fileID: 394311298}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1935788686}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1575251464}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &740003880
 GameObject:
@@ -322,12 +276,12 @@ GameObject:
   - component: {fileID: 740003881}
   - component: {fileID: 740003883}
   - component: {fileID: 740003884}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Constructor
   m_TagString: Building
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!212 &740003881
 SpriteRenderer:
@@ -465,7 +419,7 @@ GameObject:
   - component: {fileID: 759694675}
   - component: {fileID: 759694674}
   - component: {fileID: 759694676}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Spawner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -533,7 +487,7 @@ Transform:
   m_GameObject: {fileID: 759694673}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.5, y: 1.5, z: 0}
+  m_LocalPosition: {x: 3.5, y: 1.5, z: -4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -551,11 +505,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aaf213ed9fc2f8242bf0c61423d7f62a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ironIngotPrefab: {fileID: 213723178}
-  spawnPoint: {fileID: 0}
-  targetBelt: {fileID: 0}
-  spawnInterval: 2
   buildingPlacement: {fileID: 1315470462}
+  spawnItem: iron_ingot
+  spawnInterval: 1
+  timer: 0
 --- !u!1 &909084240
 GameObject:
   m_ObjectHideFlags: 0
@@ -567,12 +520,12 @@ GameObject:
   - component: {fileID: 909084243}
   - component: {fileID: 909084242}
   - component: {fileID: 909084241}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: FurnaceSprite_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!95 &909084241
 Animator:
@@ -677,7 +630,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!156049354 &987673194
 Grid:
@@ -720,11 +673,11 @@ GameObject:
   - component: {fileID: 1115358961}
   - component: {fileID: 1115358962}
   m_Layer: 6
-  m_Name: Conveyor_Belt
+  m_Name: ConveyorBelt
   m_TagString: ConveyorBelt
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!212 &1115358958
 SpriteRenderer:
@@ -771,9 +724,9 @@ SpriteRenderer:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
-  m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
-  m_AdaptiveModeThreshold: 0.5
+  m_DrawMode: 2
+  m_Size: {x: 1, y: 0.75}
+  m_AdaptiveModeThreshold: 0.415
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
@@ -787,7 +740,7 @@ Transform:
   m_GameObject: {fileID: 1115358957}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.5, y: 0.5, z: 1}
+  m_LocalPosition: {x: -0.5, y: -0.5, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -822,7 +775,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -830,9 +783,9 @@ BoxCollider2D:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 1, y: 0.75}
-    newSize: {x: 1, y: 1}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
+    newSize: {x: 1, y: 0.75}
+    adaptiveTilingThreshold: 0.415
+    drawMode: 2
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
@@ -863,10 +816,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed80799fdc5ae684489773327864b289, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemDistances: []
-  initialGap: 0
-  finalGap: 0
+  buildingManager: {fileID: 1315470462}
+  player: {fileID: 2143234843}
+  itemPrefab: {fileID: 213723178}
   nextSegment: {fileID: 0}
+  delta: 0
+  clogged: 0
+  length: 0
+  itemDistances: []
+  itemIDs: []
+  initialGap: 0
 --- !u!1 &1315470460
 GameObject:
   m_ObjectHideFlags: 0
@@ -882,7 +841,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1315470461
 Transform:
@@ -898,11 +857,9 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 987673195}
-  - {fileID: 314914409}
   - {fileID: 740003882}
   - {fileID: 1952483749}
   - {fileID: 1115358959}
-  - {fileID: 1765411744}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1315470462
@@ -920,14 +877,15 @@ MonoBehaviour:
   BuildingPlaced:
     m_PersistentCalls:
       m_Calls: []
+  BeltsModified:
+    m_PersistentCalls:
+      m_Calls: []
   buildMode: 0
   deleteMode: 0
   grid: {fileID: 987673194}
   smelterPrefab: {fileID: 1952483748}
   constructorPrefab: {fileID: 740003880}
   beltPrefab: {fileID: 1115358957}
-  conveyorBeltManager: {fileID: 314914410}
-  hologram: {fileID: 0}
   debugObject: {fileID: 213723178}
 --- !u!1 &1525984769
 GameObject:
@@ -1054,7 +1012,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!114 &1575251463
 MonoBehaviour:
@@ -1090,10 +1048,11 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 394311300}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1765411743
+--- !u!1 &1793880878
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1101,46 +1060,30 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1765411744}
-  - component: {fileID: 1765411745}
+  - component: {fileID: 1793880879}
   m_Layer: 0
-  m_Name: ConveyorBeltTimer
+  m_Name: ItemDataLoader
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
---- !u!4 &1765411744
+--- !u!4 &1793880879
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1765411743}
+  m_GameObject: {fileID: 1793880878}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1315470461}
+  m_Children:
+  - {fileID: 213723180}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1765411745
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1765411743}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bc7951ec154f9994ea283fdf5e1e0d2b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  interval: 0.5
-  OnBeltTick:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1 &1935788685
 GameObject:
   m_ObjectHideFlags: 0
@@ -1157,7 +1100,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1935788686
 Transform:
@@ -1273,12 +1216,12 @@ GameObject:
   - component: {fileID: 1952483751}
   - component: {fileID: 1952483750}
   - component: {fileID: 1952483752}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Smelter
   m_TagString: Building
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1952483749
 Transform:
@@ -1418,7 +1361,7 @@ GameObject:
   - component: {fileID: 2143234846}
   - component: {fileID: 2143234847}
   - component: {fileID: 2143234848}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1504,7 +1447,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55bd6660f9f5d22499666db69a89c2e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buildingManager: {fileID: 1315470462}
   SpriteRenderer: {fileID: 2143234844}
   speed: 10
 --- !u!50 &2143234847
@@ -1584,10 +1526,9 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1525984773}
+  - {fileID: 2143234845}
+  - {fileID: 1793880879}
   - {fileID: 1315470461}
   - {fileID: 1575251464}
-  - {fileID: 394311300}
-  - {fileID: 2143234845}
   - {fileID: 909084243}
-  - {fileID: 213723180}
   - {fileID: 759694675}

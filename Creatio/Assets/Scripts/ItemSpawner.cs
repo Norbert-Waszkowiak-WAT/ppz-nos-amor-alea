@@ -1,21 +1,28 @@
 using UnityEngine;
+using UnityEngine.UIElements;
+
+// TODO
+// Spawn objects using polling method
 
 public class IronIngotSpawner : MonoBehaviour
 {
-    public GameObject ironIngotPrefab; // Reference to the Iron_Ingot prefab
-    public Transform spawnPoint = null; // The point where the Iron_Ingot will be instantiated
-    public ConveyorBeltSegment targetBelt = null; // Reference to the neighboring belt
-
-    public float spawnInterval = 2.0f; // Time interval between spawns
-    private float timer;
-
     public BuildingPlacement buildingPlacement; // Reference to the BuildingPlacement script
-    private ContactFilter2D filter2D;
-    private Vector3 ingotPosition;
+    public string spawnItem; // Reference to the item prefab
+    public float spawnInterval = 2.0f; // Time interval between spawns [s]
+    [SerializeField] float timer;
+
+
+    static ContactFilter2D filter2D;
+    Vector3 spawnPoint; // The point where the item will be instantiated
+    ConveyorBeltSegment targetBelt = null; // Reference to the neighboring belt
+    // GameObject item; // Reference to the spawned item
+
+
+
 
     private void Start()
     {
-        buildingPlacement.BuildingPlaced.AddListener(CheckForNeighboringBelt);
+        buildingPlacement.BeltsModified.AddListener(CheckForNeighboringBelt);
 
         filter2D = new ContactFilter2D();
         filter2D.SetLayerMask(LayerMask.GetMask("ConveyorBelts"));
@@ -34,53 +41,35 @@ public class IronIngotSpawner : MonoBehaviour
 
     private void SpawnIronIngot()
     {
-        if (ironIngotPrefab != null && ingotPosition != null && targetBelt != null && HasRoomOnBelt(targetBelt))
+        if (spawnItem != null && spawnPoint != null && targetBelt != null && targetBelt.HasRoomOnBelt())
         {
-            Instantiate(ironIngotPrefab, ingotPosition, Quaternion.identity);
-            Debug.Log("Iron ingot spawned");
+            // item = Instantiate(spawnItem, spawnPoint, Quaternion.identity);
+            //Debug.Log("Iron ingot spawned");
             // Optionally, you can add the new ingot to the target belt's item list
-            targetBelt.AddItem(0f); // Assuming 0f is the initial distance for the new item
+            targetBelt.AddItem("iron_ingot", 0f); // Assuming 0f is the initial distance for the new item
+        }
 
-            //test
+        else if(targetBelt != null && !targetBelt.HasRoomOnBelt())
+        {
+            //Debug.Log("No room on belt");
         }
     }
 
     private void CheckForNeighboringBelt()
     {
-        // Assuming the building is placed at the position of the spawner
-        Vector3 worldPosition = transform.position;
-
-        // Define the directions to check for neighboring belts
-        Vector3[] directions = {
-            Vector3.right,
-         };
-
-        foreach (var direction in directions)
+        Collider2D collider = Physics2D.OverlapCircle(transform.position + transform.right, 0.1f, filter2D.layerMask);
+        
+        if (collider != null && collider != GetComponent<Collider2D>())
         {
-            Vector3 neighborPosition = worldPosition + direction;
-            Collider2D[] colliders = Physics2D.OverlapCircleAll(neighborPosition, 0.1f, filter2D.layerMask);
-            foreach (var collider in colliders)
-            {
-                ConveyorBeltSegment belt = collider.GetComponent<ConveyorBeltSegment>();
-                if (belt != null)
-                {
-                    ingotPosition = belt.transform.position;
-                    ingotPosition.z = -3;
-                    targetBelt = belt.GetComponent<ConveyorBeltSegment>();
-                    // Perform any additional logic here, such as connecting belts
-                }
-            }
+            targetBelt = collider.GetComponent<ConveyorBeltSegment>();
+            spawnPoint = collider.transform.position - targetBelt.length / 2 * collider.transform.right;
+            spawnPoint.z = -3;
+            Debug.Log("Found Belt to spawn");
         }
-    }
 
-        private bool HasRoomOnBelt(ConveyorBeltSegment belt)
-    {
-        Debug.Log("Checking if there is room on the belt");
-        // Check if there is enough room on the belt to spawn a new item
-        float minDistanceBetweenItems = 0.5f; // Define the minimum distance required between items
-        float finalGap = belt.finalGap; // Assuming finalGap is a public property of ConveyorBeltSegment
-
-        // Check if the final gap is large enough to accommodate a new item
-        return finalGap >= minDistanceBetweenItems;
+        else
+        {
+            targetBelt = null;
+        }
     }
 }

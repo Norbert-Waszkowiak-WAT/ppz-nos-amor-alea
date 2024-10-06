@@ -4,19 +4,17 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public BuildingPlacement buildingManager;
     public SpriteRenderer SpriteRenderer;
     public float speed = 5.0f;
 
     private Rigidbody2D rb;
     private Vector2 moveVelocity;
-    private GameObject hologram;
 
    private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        LayerMask layer2 = LayerMask.NameToLayer("Hologram");
-        Physics2D.IgnoreLayerCollision(0, layer2, true);
+        LayerMask layer = LayerMask.NameToLayer("Hologram");
+        Physics2D.IgnoreLayerCollision(0, layer, true);
     }
 
     // Update is called once per frame

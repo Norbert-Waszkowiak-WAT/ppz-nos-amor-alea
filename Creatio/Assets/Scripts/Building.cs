@@ -8,8 +8,8 @@ public class Building : MonoBehaviour
 {
     public BuildingPlacement buildingManager;
 
-    private bool deleteMode = false;
-    private bool groupDeleteMode = false;
+    bool deleteMode = false;
+    bool groupDeleteMode = false;
     SpriteRenderer sprite;
 
     // Start is called before the first frame update

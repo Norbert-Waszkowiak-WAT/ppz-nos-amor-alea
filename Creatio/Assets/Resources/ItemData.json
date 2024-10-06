@@ -1,0 +1,12 @@
+{
+    "iron_ingot": {
+        "spritePath": "Sprites/Iron_Ingot",
+        "description": "Cooked iron ore",
+        "value": 100
+    },
+    "item2": {
+        "spritePath": "Sprites/Item2Sprite",
+        "description": "This is item 2",
+        "value": 200
+    }
+}

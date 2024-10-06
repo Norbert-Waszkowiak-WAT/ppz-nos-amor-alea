@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public class BuildingPlacement : MonoBehaviour
 {
     public UnityEngine.Events.UnityEvent BuildingPlaced;
+    public UnityEngine.Events.UnityEvent BeltsModified;
 
     public bool buildMode;
     public bool deleteMode;
@@ -21,26 +23,47 @@ public class BuildingPlacement : MonoBehaviour
     public GameObject smelterPrefab;
     public GameObject constructorPrefab;
     public GameObject beltPrefab;
-    public  ConveyorBeltManager conveyorBeltManager;
-
-    public GameObject hologram = null;
-
     public GameObject debugObject;
+
+    GameObject hologram = null;
+    ContactFilter2D filter;
+
 
     BuildingType currentBuildingType;
     // Dictionary to map BuildingType to GameObject
-    private Dictionary<BuildingType, GameObject> buildingPrefabs;
+    Dictionary<BuildingType, GameObject> buildingPrefabs;
 
     bool isPlacingBelt;
+    int segmentCount;
     bool canPlaceBelt;
+
     Vector3 initialPosition;
-    private GameObject firstBelt = null;
+    GameObject firstBelt = null;
+
     List<GameObject> beltHolograms = new List<GameObject>();
+
+
+    /*
+    Z Positioning:
+     1: Prefabs
+     0: Map
+    -1: Small Map Objects [Rocks, grass patches, etc.], Ore depostis
+    -2: Conveyor Belts
+    -3: Items
+    -4: Buildings
+    -5: Player, enemies, etc.
+    -6: Tools
+    -7: Large Trees
+    -8: 
+    -9: UI
+    -10: Camera
+    */
+
 
     // Start is called before the first frame update
     void Start()
     {
-           // Initialize the dictionary with your building prefabs
+        // Initialize the dictionary with your building prefabs
         buildingPrefabs = new Dictionary<BuildingType, GameObject>
         {
             { BuildingType.smelter, smelterPrefab },
@@ -51,6 +74,11 @@ public class BuildingPlacement : MonoBehaviour
         currentBuildingType = BuildingType.belt;
         buildMode = false;
         deleteMode = false;
+
+        filter = new ContactFilter2D();
+        filter.layerMask = LayerMask.GetMask("ConveyorBelts") | LayerMask.GetMask("Buildings") | LayerMask.GetMask("Large Flora");
+        filter.useLayerMask = true;
+
     }
 
     // Update is called once per frame
@@ -103,7 +131,7 @@ public class BuildingPlacement : MonoBehaviour
         if (buildingPrefabs.TryGetValue(buildingType, out GameObject buildingPrefab))
         {
             Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            position.z = -2;
+            position.z = -4;
             GameObject created = Instantiate(buildingPrefab, SnapToGrid(position, grid), hologram.transform.rotation);
             created.name = buildingType.ToString();
             Debug.Log("placed");
@@ -125,50 +153,90 @@ public class BuildingPlacement : MonoBehaviour
         
         if (hologram != null)
         {
-        hologram.transform.position = SnapToGrid(Camera.main.ScreenToWorldPoint(Input.mousePosition), grid);
+            hologram.transform.position = SnapToGrid(Camera.main.ScreenToWorldPoint(Input.mousePosition), grid);
         }
 
         //Fix rotation after first click
         //fix hologram flickering at the end
         //figure out how to connect the belt segments
 
-        int layerMask = LayerMask.NameToLayer("Hologram"); 
-        int layerMaskBelt = LayerMask.NameToLayer("ConveyorBelts");
+        int hologramLayer = LayerMask.NameToLayer("Hologram"); 
+        int beltLayer = LayerMask.NameToLayer("ConveyorBelts");
+
         if (Input.GetMouseButtonDown(0))
         {
             if(!isPlacingBelt) {
+                // First click: create the first hologram
                 firstBelt = Instantiate(hologram, initialPosition, hologram.transform.rotation);
-                firstBelt.transform.position = SnapToGrid(Camera.main.ScreenToWorldPoint(Input.mousePosition), grid);
-                Destroy(hologram);
-                // First click: start placing the belt
-                initialPosition = firstBelt.transform.position;
-                isPlacingBelt = true;
+                initialPosition = SnapToGrid(Camera.main.ScreenToWorldPoint(Input.mousePosition), grid);
+                firstBelt.transform.position = initialPosition;
+                firstBelt.layer = hologramLayer;
 
+                isPlacingBelt = true;
+                Destroy(hologram);
                 beltHolograms.Add(firstBelt);
             } 
-            else if (canPlaceBelt){
-                // Second click: place the belt segments
+            
+            else if (canPlaceBelt)
+            {
+                // Second click: place the belt segment
+                // Length + 1 to account for the segment being in the middle of the grid
+
+                // Create the belt segment and initialize it
+                Vector3 position = segmentCount / 2 * firstBelt.transform.right + initialPosition;
+                if(segmentCount % 2 == 0) {
+                    position -= 0.5f * firstBelt.transform.right;
+                }
+
+                position.z = -2;
+
+                GameObject beltSegment = Instantiate(beltPrefab, position, firstBelt.transform.rotation);
+
+                beltSegment.GetComponent<ConveyorBeltSegment>().RemoveHologramFlag();
+                beltSegment.GetComponent<ConveyorBeltSegment>().SetSpeed(1.0f);
+                beltSegment.GetComponent<ConveyorBeltSegment>().length = segmentCount;
+
+                // Set the belt segment's length
+                // The belt segment scale is (1,1,1) and origin in the middle of length
+                SpriteRenderer spriteRenderer = beltSegment.GetComponent<SpriteRenderer>();
+                if (spriteRenderer != null) spriteRenderer.size = new Vector2(segmentCount, .75f);
+
+                // Adjust the collider size and offset
+                BoxCollider2D collider = beltSegment.GetComponent<BoxCollider2D>();
+                if (collider != null)
+                {
+                    collider.size = new Vector2(segmentCount - 0.05f, .75f); // Subtract 0.05 to account for 0.025 margin on each end
+                    //collider.offset = new Vector2((length - 0.05f) / 2, 0); // Center the collider
+                }
+
+                beltSegment.name = BuildingType.belt.ToString();
+                beltSegment.layer = beltLayer;
+
                 foreach (var hologram in beltHolograms)
                 {
-                    GameObject created = Instantiate(beltPrefab, hologram.transform.position, hologram.transform.rotation);
-                    created.name = BuildingType.belt.ToString();
-                    created.layer = layerMaskBelt;
+                    Destroy(hologram);
+                }
 
-                    ConveyorBeltSegment newSegment = created.GetComponent<ConveyorBeltSegment>();
-                    if (newSegment != null)
-                    {
-                        conveyorBeltManager.PlaceBeltSegment(newSegment, created.transform.position);
-                    }
-                }
-                // Clear holograms
-                foreach (var beltHologram in beltHolograms)
-                {
-                    Destroy(beltHologram);
-                }
                 beltHolograms.Clear();
                 isPlacingBelt = false;
+
+                BeltsModified.Invoke();
+                return;
             }
         }
+
+        if (Input.GetMouseButtonDown(1)) {
+            // Cancel belt placement
+            isPlacingBelt = false;
+            Destroy(firstBelt);
+            foreach (var beltHologram in beltHolograms)
+            {
+                Destroy(beltHologram);
+            }
+            beltHolograms.Clear();
+
+        }
+
         if (isPlacingBelt)
         {   
             if(firstBelt == null) {
@@ -181,39 +249,37 @@ public class BuildingPlacement : MonoBehaviour
             // Calculate direction based on the initial hologram's rotation
 
             Vector3 direction = firstBelt.transform.right;
-            float distance;
-
-            Debug.Log(firstBelt.transform.localEulerAngles.z);
+            float length;
 
             if(firstBelt.transform.rotation.eulerAngles.z == 0)
             {
-                distance = initialPosition.x - currentMousePosition.x - 0.5f;
-                distance *= -1;
+                length = initialPosition.x - currentMousePosition.x - 0.5f;
+                length *= -1;
             }
 
             else if (firstBelt.transform.rotation.eulerAngles.z == 180)
             {
-                distance = initialPosition.x - currentMousePosition.x + 0.5f;
+                length = initialPosition.x - currentMousePosition.x + 0.5f;
             }
 
             else if (firstBelt.transform.rotation.eulerAngles.z == 90)
             {
-                distance = initialPosition.y - currentMousePosition.y - 0.5f;
-                distance *= -1;
+                length = initialPosition.y - currentMousePosition.y - 0.5f;
+                length *= -1;
             }
 
             else if (firstBelt.transform.rotation.eulerAngles.z == 270)
             {
-                distance = initialPosition.y - currentMousePosition.y + 0.5f;
+                length = initialPosition.y - currentMousePosition.y + 0.5f;
             }
 
             else
             {
-                distance = 0;
+                length = 0;
             }
 
 
-            int segmentCount = (int)Mathf.Ceil(distance / grid.cellSize.x);
+            segmentCount = (int)Mathf.Ceil(length / grid.cellSize.x);
             if (segmentCount < 1)
             {
                 segmentCount = 1;
@@ -230,11 +296,11 @@ public class BuildingPlacement : MonoBehaviour
 
             for (int i = 1; i < segmentCount; i++)
             {
-                Vector3 segmentPosition = initialPosition + direction * (i * grid.cellSize.x);
+                Vector3 segmentPosition = i * grid.cellSize.x * direction + initialPosition;
                 GameObject newHologram = Instantiate(beltPrefab, segmentPosition, firstBelt.transform.rotation);
                 newHologram.GetComponent<SpriteRenderer>().color = new Color(0.2f, 0.2f, 1, 0.5f);
                 newHologram.name = "BeltHologram";
-                newHologram.layer = layerMask;
+                newHologram.layer = hologramLayer;
                 beltHolograms.Add(newHologram);
             }
 
@@ -294,7 +360,6 @@ public class BuildingPlacement : MonoBehaviour
             return true;
         }
 
-        ContactFilter2D filter = new ContactFilter2D().NoFilter();
         if(building.GetComponent<Collider2D>().OverlapCollider(filter, new Collider2D[1]) != 0)
         {
             return false;
@@ -379,7 +444,12 @@ public class BuildingPlacement : MonoBehaviour
     {   
         if (Input.GetKeyDown(KeyCode.F))
         {
-            buildMode = false;
+            if(buildMode)
+            {
+                buildMode = false;
+                Destroy(hologram);
+            }
+
             deleteMode = !deleteMode;
             Debug.Log("Delete mode: " + deleteMode);
         }

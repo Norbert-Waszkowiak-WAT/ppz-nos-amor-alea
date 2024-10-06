@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class ConveyorBeltManager : MonoBehaviour
 {
+
+    /*
     public List<ConveyorBeltSegment> beltSegments = new List<ConveyorBeltSegment>();
     public float moveSpeed = 1.0f;
 
@@ -38,19 +40,25 @@ public class ConveyorBeltManager : MonoBehaviour
     {
         newSegment.transform.position = position;
         beltSegments.Add(newSegment);
-        CheckAndConnectNeighboringSegments(newSegment);
     }
 
-    private void CheckAndConnectNeighboringSegments(ConveyorBeltSegment segment)
+    public void RemoveBeltSegment(ConveyorBeltSegment segment)
     {
-        float rotationZ = segment.transform.localEulerAngles.z;
+        beltSegments.Remove(segment);
+    }
+
+    /*
+    public void CheckAndConnectNeighboringSegments(ConveyorBeltSegment currentSegment)
+    {
+        float rotationZ = currentSegment.transform.localEulerAngles.z;
         rotationOffset = new Vector2(MathF.Round(Mathf.Cos(rotationZ * Mathf.Deg2Rad)), MathF.Round(Mathf.Sin(rotationZ * Mathf.Deg2Rad)));
 
-        Vector2 neighborPosition = segment.transform.position;
-        neighborPosition += rotationOffset;
+        //look behind and find previous segment
+        Vector2 currentPosition = currentSegment.transform.position;
+        Vector2 neighborPosition = currentSegment.transform.position;
+        neighborPosition -= rotationOffset;
 
         Collider2D collider = Physics2D.OverlapCircle(neighborPosition, 0.1f, filter2D.layerMask);
-        Debug.Log("Checking Collider");
 
         if (collider == null)
         {
@@ -59,23 +67,14 @@ public class ConveyorBeltManager : MonoBehaviour
         }
 
         ConveyorBeltSegment neighborSegment = collider.GetComponent<ConveyorBeltSegment>();
-        if (neighborSegment != null && neighborSegment != segment)
+
+        if (neighborSegment != null && neighborSegment != currentSegment)
         {
-            if (ShouldConnectSegments(segment, neighborSegment))
+            if (neighborSegment.NextBeltPosition() == currentPosition)
             {
-                segment.ConnectToNextSegment(neighborSegment);
+                neighborSegment.ConnectToNextSegment(currentSegment);
             }
         }
     }
-
-    private bool ShouldConnectSegments(ConveyorBeltSegment segment, ConveyorBeltSegment neighborSegment)
-    {
-        Debug.Log("Checking if segments should connect");
-        float neighborRotationZ = neighborSegment.transform.localEulerAngles.z;
-        if(MathF.Abs(segment.transform.localEulerAngles.z - neighborRotationZ) <= 90)
-        {
-            return true;
-        }
-        return false;
-    }
+    */
 }
