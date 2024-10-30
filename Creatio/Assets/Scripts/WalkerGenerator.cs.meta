@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: a42ce555c7b602d439c8752bdd96ab37
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - tileMap: {instanceID: 0}
+  - GRASS: {fileID: 11400000, guid: 706d8e9d8477f5e41aefc4a062ae5e4d, type: 2}
+  - WATER: {fileID: 11400000, guid: 7e35e1af323e26a47a768f718f847c3f, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
