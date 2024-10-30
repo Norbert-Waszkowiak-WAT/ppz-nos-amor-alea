@@ -102,7 +102,11 @@ public class MapGenerator : MonoBehaviour
     void Start()
     {
         tilemap.size = new Vector3Int(width, height, 0);
-        Debug.Log(tilemap.size);
+
+        // tilemap.layoutGrid.transform.localScale = new Vector3(scale, scale, 1);
+        // Debug.Log(tilemap.size + " " + tilemap.layoutGrid.transform.localScale);
+
+    
         GenerateMap();
     }
 

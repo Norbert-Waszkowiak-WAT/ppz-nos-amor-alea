@@ -1042,7 +1042,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0, z: -5}
   zoomSpeed: 5
   minZoom: 3
-  maxZoom: 25
+  maxZoom: 12
 --- !u!81 &1525984771
 AudioListener:
   m_ObjectHideFlags: 0
@@ -1168,8 +1168,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ba77b40f067bad44fa0a4a1875becd35, type: 2}
   - {fileID: 11400000, guid: 7dd5d4e3548391f41b302d4e16afb624, type: 2}
   tilemap: {fileID: 1201190151}
-  width: 128
-  height: 128
+  width: 64
+  height: 64
   scale: 1
   offset: {x: 0, y: 0}
   heightWaves:
