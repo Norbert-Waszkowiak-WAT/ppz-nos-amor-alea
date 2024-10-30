@@ -1,6 +1,6 @@
 {
-    "iron_ingot": {
-        "spritePath": "Sprites/Iron_Ingot",
+    "Iron_Ingot": {
+        "spritePath": "Sprites/Iron_Ingot.png",
         "description": "Cooked iron ore",
         "value": 100
     },

@@ -194,7 +194,7 @@ public class ConveyorBeltSegment : MonoBehaviour
                     {
                         itemPosition = globalBeltEnd - (0.5f * i * transform.right);
                         itemPosition.z = -3;
-                        items[i].transform.position = itemPosition;
+                        if(items[i] != null) items[i].transform.position = itemPosition;
                         itemDistances[i] = i * 0.5f;
                         isStuck[i] = true;
                     }
