@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class BuildingPlacement : MonoBehaviour
@@ -10,28 +11,17 @@ public class BuildingPlacement : MonoBehaviour
 
     public bool buildMode;
     public bool deleteMode;
-
     public Grid grid;
-    public enum BuildingType
-    {
-        smelter,
-        constructor,
-        belt
-    }
+
+    
 
     //public GameObject beltPrefab;
-    public GameObject smelterPrefab;
-    public GameObject constructorPrefab;
-    public GameObject beltPrefab;
-    public GameObject debugObject;
+    public List<GameObject> buildingPrefabs;
+    [SerializeField] GameObject belt;
+    [SerializeField] GameObject currentBuildingType;
 
     GameObject hologram = null;
     ContactFilter2D filter;
-
-
-    BuildingType currentBuildingType;
-    // Dictionary to map BuildingType to GameObject
-    Dictionary<BuildingType, GameObject> buildingPrefabs;
 
     bool isPlacingBelt;
     int segmentCount;
@@ -41,6 +31,8 @@ public class BuildingPlacement : MonoBehaviour
     GameObject firstBelt = null;
 
     List<GameObject> beltHolograms = new List<GameObject>();
+
+    private int hologramLayer;
 
 
     /*
@@ -63,21 +55,17 @@ public class BuildingPlacement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        // Initialize the dictionary with your building prefabs
-        buildingPrefabs = new Dictionary<BuildingType, GameObject>
-        {
-            { BuildingType.smelter, smelterPrefab },
-            { BuildingType.constructor, constructorPrefab },
-            { BuildingType.belt, beltPrefab }
-            // Add other building types and their prefabs here
-        };
-        currentBuildingType = BuildingType.belt;
         buildMode = false;
         deleteMode = false;
 
         filter = new ContactFilter2D();
         filter.layerMask = LayerMask.GetMask("ConveyorBelts") | LayerMask.GetMask("Buildings") | LayerMask.GetMask("Large Flora");
         filter.useLayerMask = true;
+
+        belt = buildingPrefabs[0];
+        currentBuildingType = belt;
+
+        hologramLayer = LayerMask.NameToLayer("Hologram");
 
     }
 
@@ -91,7 +79,7 @@ public class BuildingPlacement : MonoBehaviour
         {
             Rotate(hologram);
             SwitchBuildingType(); 
-            if(currentBuildingType == BuildingType.belt)
+            if(currentBuildingType == belt)
             {
                 Rotate(firstBelt);
                 BuildBelt();
@@ -110,12 +98,12 @@ public class BuildingPlacement : MonoBehaviour
             beltHolograms.Clear();
         }
 
-        if(Input.GetKeyDown(KeyCode.G)) {
-            Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            position.z = -3;
-            Instantiate(debugObject, SnapToGrid(position, grid), transform.rotation);
-            Debug.Log("Debug Object placed");
-        }     
+        // if(Input.GetKeyDown(KeyCode.G)) {
+            // Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            // position.z = -3;
+            // Instantiate(debugObject, SnapToGrid(position, grid), transform.rotation);
+            // Debug.Log("Debug Object placed");
+        // }     
     }
 
     Vector3 SnapToGrid(Vector3 Position, Grid grid)
@@ -126,22 +114,14 @@ public class BuildingPlacement : MonoBehaviour
         return Position;
     }
 
-    void Build(BuildingType buildingType)
+    void Build(GameObject buildingType)
     {
-        if (buildingPrefabs.TryGetValue(buildingType, out GameObject buildingPrefab))
-        {
-            Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            position.z = -4;
-            GameObject created = Instantiate(buildingPrefab, SnapToGrid(position, grid), hologram.transform.rotation);
-            created.name = buildingType.ToString();
-            Debug.Log("placed");
-        }
-        
-        else
-        {
-            Debug.LogError("Building type not found in dictionary");
-            return;
-        }
+        Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        position.z = -4;
+        GameObject created = Instantiate(buildingType, SnapToGrid(position, grid), hologram.transform.rotation);
+        created.name = buildingType.ToString();
+        created.GetComponent<Building>().SetManager(this);
+        Debug.Log("placed");
     }
 
     void BuildBelt() 
@@ -190,7 +170,7 @@ public class BuildingPlacement : MonoBehaviour
 
                 position.z = -2;
 
-                GameObject beltSegment = Instantiate(beltPrefab, position, firstBelt.transform.rotation);
+                GameObject beltSegment = Instantiate(belt, position, firstBelt.transform.rotation);
 
                 beltSegment.GetComponent<ConveyorBeltSegment>().RemoveHologramFlag();
                 beltSegment.GetComponent<ConveyorBeltSegment>().SetSpeed(1.0f);
@@ -209,8 +189,10 @@ public class BuildingPlacement : MonoBehaviour
                     //collider.offset = new Vector2((length - 0.05f) / 2, 0); // Center the collider
                 }
 
-                beltSegment.name = BuildingType.belt.ToString();
+                beltSegment.name = belt.ToString();
                 beltSegment.layer = beltLayer;
+                beltSegment.GetComponent<Building>().SetManager(this);
+                beltSegment.GetComponent<ConveyorBeltSegment>().SetManager(this);
 
                 foreach (var hologram in beltHolograms)
                 {
@@ -228,13 +210,7 @@ public class BuildingPlacement : MonoBehaviour
         if (Input.GetMouseButtonDown(1)) {
             // Cancel belt placement
             isPlacingBelt = false;
-            Destroy(firstBelt);
-            foreach (var beltHologram in beltHolograms)
-            {
-                Destroy(beltHologram);
-            }
-            beltHolograms.Clear();
-
+            ClearBeltHolograms();
         }
 
         if (isPlacingBelt)
@@ -297,7 +273,7 @@ public class BuildingPlacement : MonoBehaviour
             for (int i = 1; i < segmentCount; i++)
             {
                 Vector3 segmentPosition = i * grid.cellSize.x * direction + initialPosition;
-                GameObject newHologram = Instantiate(beltPrefab, segmentPosition, firstBelt.transform.rotation);
+                GameObject newHologram = Instantiate(belt, segmentPosition, firstBelt.transform.rotation);
                 newHologram.GetComponent<SpriteRenderer>().color = new Color(0.2f, 0.2f, 1, 0.5f);
                 newHologram.name = "BeltHologram";
                 newHologram.layer = hologramLayer;
@@ -355,8 +331,8 @@ public class BuildingPlacement : MonoBehaviour
     }
     bool IsSpaceClear(GameObject building)
      {  
-        if(building == null)
-        {
+        if(building == null || building.GetComponent<Collider2D>() == null) {
+            Debug.Log("Current building has no collider");
             return true;
         }
 
@@ -371,24 +347,35 @@ public class BuildingPlacement : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            currentBuildingType = BuildingType.belt;
+            currentBuildingType = buildingPrefabs[0];
             Destroy(hologram);
             CreateHologram();
+            ClearBeltHolograms();
             Debug.Log("Switched to Belt");
         }
         else
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            currentBuildingType = BuildingType.smelter;
+            currentBuildingType = buildingPrefabs[1];
             Destroy(hologram);
             CreateHologram();
-            Debug.Log("Switched to Smelter");
+            ClearBeltHolograms();
+            Debug.Log("Switched to Miner");
         }
         else if (Input.GetKeyDown(KeyCode.Alpha3))
         {
-            currentBuildingType = BuildingType.constructor;
+            currentBuildingType = buildingPrefabs[2];
             Destroy(hologram);
             CreateHologram();
+            ClearBeltHolograms();
+            Debug.Log("Switched to Smelter");
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            currentBuildingType = buildingPrefabs[3];
+            Destroy(hologram);
+            CreateHologram();
+            ClearBeltHolograms();
             Debug.Log("Switched to Constructor");
         }
         // Add more else if blocks for other building types as needed
@@ -397,7 +384,7 @@ public class BuildingPlacement : MonoBehaviour
     void CreateHologram()
     {
         GameObject newHologram;
-        GameObject building = buildingPrefabs[currentBuildingType];
+        GameObject building = currentBuildingType;
         Vector3 position = SnapToGrid(Camera.main.ScreenToWorldPoint(Input.mousePosition), grid);
         position.z = -2;
 
@@ -406,9 +393,18 @@ public class BuildingPlacement : MonoBehaviour
             newHologram = Instantiate(building, position, transform.rotation);
             newHologram.GetComponent<SpriteRenderer>().color = new Color(0.2f, 0.2f, 1, 0.5f);
             newHologram.name = "Hologram";
-            newHologram.layer = 8;
+            newHologram.layer = hologramLayer;
             hologram = newHologram;
         }
+    }
+
+    void ClearBeltHolograms() {
+            Destroy(firstBelt);
+            foreach (var beltHologram in beltHolograms)
+            {
+                Destroy(beltHologram);
+            }
+            beltHolograms.Clear();
     }
     /*
     GameObject UnderMouse()
@@ -464,7 +460,7 @@ public class BuildingPlacement : MonoBehaviour
 
         if (hologram != null)
         {
-            if (buildMode && currentBuildingType != BuildingType.belt)
+            if (buildMode && currentBuildingType != belt)
             {
                 hologram.transform.position = SnapToGrid(Camera.main.ScreenToWorldPoint(Input.mousePosition), grid);
                 if (Input.GetMouseButtonDown(0))
@@ -475,7 +471,7 @@ public class BuildingPlacement : MonoBehaviour
                         BuildingPlaced.Invoke();
                     }
                 }
-            }                
+            }       
         }
 
         if (!IsSpaceClear(hologram))
@@ -487,4 +483,8 @@ public class BuildingPlacement : MonoBehaviour
             hologram.GetComponent<SpriteRenderer>().color = new Color(0.2f, 0.2f, 1, 0.5f);
         }
     }
+
+
+
+
 }

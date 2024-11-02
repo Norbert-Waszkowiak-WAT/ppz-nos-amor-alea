@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 
 public class ConveyorBeltSegment : MonoBehaviour
@@ -13,14 +14,14 @@ public class ConveyorBeltSegment : MonoBehaviour
 
     // public ConveyorBeltManager conveyorBeltManager; - unused
     public BuildingPlacement buildingManager;
-    public GameObject player;
+    // public GameObject player;
     public GameObject itemPrefab; //object used to Instantiate items as game objects;
     [SerializeField] ConveyorBeltSegment nextSegment = null; // Reference to the next segment
     [SerializeField] float delta; // Distance to move items each frame, less = higher fps
     [SerializeField] bool clogged = false; // can the first item move
     public int length; 
 
-    static float moveSpeed; // speed of belt
+    static public float moveSpeed; // speed of belt
                             // 1 = 120 ipm / 2ips [items per minute/second]
     bool isHologram = true; 
     static ContactFilter2D filter2D;
@@ -42,28 +43,30 @@ public class ConveyorBeltSegment : MonoBehaviour
 
     void Start()
     {
-        buildingManager.BeltsModified.AddListener(UpdateNextBelt);
+        if(!isHologram) {
+            buildingManager.BeltsModified.AddListener(UpdateNextBelt);
 
-        filter2D = new ContactFilter2D();
-        filter2D.SetLayerMask(LayerMask.GetMask("ConveyorBelts"));
-        filter2D.useLayerMask = true;
+            filter2D = new ContactFilter2D();
+            filter2D.SetLayerMask(LayerMask.GetMask("ConveyorBelts"));
+            filter2D.useLayerMask = true;
 
-        UpdateNextBelt();
+            UpdateNextBelt();
 
-        itemDistances = new List<float>();
-        itemIDs = new List<string>();
-        isStuck = new List<bool>();
-        items = new List<GameObject>();
+            itemDistances = new List<float>();
+            itemIDs = new List<string>();
+            isStuck = new List<bool>();
+            items = new List<GameObject>();
 
-        itemDataDictionary = ItemData.LoadItemData();
+            itemDataDictionary = ItemData.LoadItemData();
 
-        initialGap = length;
+            initialGap = length;
 
-        if (length % 2 == 0) {
-            globalBeltEnd = length / 2 * transform.right + transform.position;
-        }
-        else {
-            globalBeltEnd =  (length / 2 + 0.5f) * transform.right + transform.position;
+            if (length % 2 == 0) {
+                globalBeltEnd = length / 2 * transform.right + transform.position;
+            }
+            else {
+                globalBeltEnd =  (length / 2 + 0.5f) * transform.right + transform.position;
+            }
         }
     }
 
@@ -71,11 +74,17 @@ public class ConveyorBeltSegment : MonoBehaviour
     {
         delta = moveSpeed * Time.deltaTime;
 
-        MoveItems(delta);
-        UpdateItemTransforms();
-        CheckItemsProximityToPlayer();
+        if(!isHologram) {
+            MoveItems(delta);
+            UpdateItemTransforms();
+            // CheckItemsProximityToPlayer();
+        }
+
     }
 
+    public float GetSpeed() {
+        return moveSpeed;
+    }
     private void UpdateNextBelt() 
     {
         if(isHologram) return;
@@ -255,24 +264,24 @@ public class ConveyorBeltSegment : MonoBehaviour
         }
     }
 
-        private void CheckItemsProximityToPlayer()
-    {
-        for (int i = 0; i < items.Count; i++)
-        {
-            Vector3 itemPosition = globalBeltEnd - itemDistances[i] * transform.right;
+    // private void CheckItemsProximityToPlayer()
+    // {
+    //     for (int i = 0; i < items.Count; i++)
+    //     {
+    //         Vector3 itemPosition = globalBeltEnd - itemDistances[i] * transform.right;
 
-            float distanceToPlayer = Vector3.Distance(itemPosition, player.transform.position);
-            if (distanceToPlayer <= 100.0f && IsVisible(itemPosition))
-            {
-                CreateItem(itemIDs[i], itemPosition, i);
-            }
-            else if (items[i] != null)
-            {
-                Destroy(items[i]);
-                items[i] = null;
-            }
-        }
-    }
+    //         float distanceToPlayer = Vector3.Distance(itemPosition, player.transform.position);
+    //         if (distanceToPlayer <= 100.0f && IsVisible(itemPosition))
+    //         {
+    //             CreateItem(itemIDs[i], itemPosition, i);
+    //         }
+    //         else if (items[i] != null)
+    //         {
+    //             Destroy(items[i]);
+    //             items[i] = null;
+    //         }
+    //     }
+    // }
 
     private bool IsVisible( Vector3 position)
     {
@@ -341,11 +350,16 @@ public class ConveyorBeltSegment : MonoBehaviour
         if(!isHologram) 
         {
             buildingManager.BeltsModified.Invoke();
+            buildingManager.BeltsModified.RemoveListener(UpdateNextBelt);
+                    
+            foreach (var item in items)
+            {
+                Destroy(item);
+            }
         }
-        buildingManager.BeltsModified.RemoveListener(UpdateNextBelt);
-        foreach (var item in items)
-        {
-            Destroy(item);
-        }
+    }
+
+    public void SetManager(BuildingPlacement refernce) {
+        buildingManager = refernce;
     }
 }

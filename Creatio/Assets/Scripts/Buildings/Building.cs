@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class Building : MonoBehaviour
 {
-    public BuildingPlacement buildingManager;
+    public BuildingPlacement manager;
 
     bool deleteMode = false;
     bool groupDeleteMode = false;
@@ -21,9 +21,11 @@ public class Building : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(!buildingManager.buildMode)
+        if(manager == null) return;
+        
+        if(!manager.buildMode)
         {
-            if (!buildingManager.deleteMode)
+            if (!manager.deleteMode)
             {
                 deleteMode = false;
                 groupDeleteMode = false;
@@ -47,9 +49,13 @@ public class Building : MonoBehaviour
 
     }
 
+    public void SetManager(BuildingPlacement reference) {
+        manager = reference;
+    }
+
     private void OnMouseEnter()
     {
-        if (buildingManager.deleteMode)
+        if (manager.deleteMode)
         {
             deleteMode = true;
             if (Input.GetKey(KeyCode.LeftControl))
@@ -61,7 +67,7 @@ public class Building : MonoBehaviour
 
     private void OnMouseOver()
     {
-        if (buildingManager.deleteMode)
+        if (manager.deleteMode)
         {
             deleteMode = true;
             if (Input.GetKey(KeyCode.LeftControl))
