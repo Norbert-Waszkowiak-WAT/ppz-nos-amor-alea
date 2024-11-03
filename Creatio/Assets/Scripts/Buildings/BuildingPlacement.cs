@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class BuildingPlacement : MonoBehaviour
 {
@@ -12,13 +13,13 @@ public class BuildingPlacement : MonoBehaviour
     public bool buildMode;
     public bool deleteMode;
     public Grid grid;
+    public Tilemap resourceTilemap;
 
     
 
     //public GameObject beltPrefab;
     public List<GameObject> buildingPrefabs;
-    [SerializeField] GameObject belt;
-    [SerializeField] GameObject currentBuildingType;
+    [SerializeField] BuildingType currentBuildingType;
 
     GameObject hologram = null;
     ContactFilter2D filter;
@@ -33,6 +34,16 @@ public class BuildingPlacement : MonoBehaviour
     List<GameObject> beltHolograms = new List<GameObject>();
 
     private int hologramLayer;
+
+    enum BuildingType {
+        belt,
+        miner,
+        smelter,
+        constructor,
+        assembler,
+        producer,
+        refinery
+    }
 
 
     /*
@@ -51,7 +62,6 @@ public class BuildingPlacement : MonoBehaviour
     -10: Camera
     */
 
-
     // Start is called before the first frame update
     void Start()
     {
@@ -62,8 +72,7 @@ public class BuildingPlacement : MonoBehaviour
         filter.layerMask = LayerMask.GetMask("ConveyorBelts") | LayerMask.GetMask("Buildings") | LayerMask.GetMask("Large Flora");
         filter.useLayerMask = true;
 
-        belt = buildingPrefabs[0];
-        currentBuildingType = belt;
+        currentBuildingType = BuildingType.belt;
 
         hologramLayer = LayerMask.NameToLayer("Hologram");
 
@@ -79,7 +88,7 @@ public class BuildingPlacement : MonoBehaviour
         {
             Rotate(hologram);
             SwitchBuildingType(); 
-            if(currentBuildingType == belt)
+            if(currentBuildingType == BuildingType.belt)
             {
                 Rotate(firstBelt);
                 BuildBelt();
@@ -170,7 +179,7 @@ public class BuildingPlacement : MonoBehaviour
 
                 position.z = -2;
 
-                GameObject beltSegment = Instantiate(belt, position, firstBelt.transform.rotation);
+                GameObject beltSegment = Instantiate(buildingPrefabs[(int)BuildingType.belt], position, firstBelt.transform.rotation);
 
                 beltSegment.GetComponent<ConveyorBeltSegment>().RemoveHologramFlag();
                 beltSegment.GetComponent<ConveyorBeltSegment>().SetSpeed(1.0f);
@@ -189,7 +198,7 @@ public class BuildingPlacement : MonoBehaviour
                     //collider.offset = new Vector2((length - 0.05f) / 2, 0); // Center the collider
                 }
 
-                beltSegment.name = belt.ToString();
+                beltSegment.name = BuildingType.belt.ToString();
                 beltSegment.layer = beltLayer;
                 beltSegment.GetComponent<Building>().SetManager(this);
                 beltSegment.GetComponent<ConveyorBeltSegment>().SetManager(this);
@@ -273,7 +282,7 @@ public class BuildingPlacement : MonoBehaviour
             for (int i = 1; i < segmentCount; i++)
             {
                 Vector3 segmentPosition = i * grid.cellSize.x * direction + initialPosition;
-                GameObject newHologram = Instantiate(belt, segmentPosition, firstBelt.transform.rotation);
+                GameObject newHologram = Instantiate(buildingPrefabs[(int)BuildingType.belt], segmentPosition, firstBelt.transform.rotation);
                 newHologram.GetComponent<SpriteRenderer>().color = new Color(0.2f, 0.2f, 1, 0.5f);
                 newHologram.name = "BeltHologram";
                 newHologram.layer = hologramLayer;
@@ -330,24 +339,39 @@ public class BuildingPlacement : MonoBehaviour
         }
     }
     bool IsSpaceClear(GameObject building)
-     {  
+    {  
         if(building == null || building.GetComponent<Collider2D>() == null) {
             Debug.Log("Current building has no collider");
             return true;
         }
 
-        if(building.GetComponent<Collider2D>().OverlapCollider(filter, new Collider2D[1]) != 0)
+        if(building.GetComponent<Collider2D>().OverlapCollider(filter, new Collider2D[1]) == 0)
         {
-            return false;
+            if(currentBuildingType != BuildingType.miner) {
+                Debug.Log("Space clear by collider check");
+                return true;
+            }
+
+            else {
+                Vector3Int minerPosition = resourceTilemap.WorldToCell(building.transform.position);
+                minerPosition.z = 0;
+                if(resourceTilemap.GetTile(minerPosition) is ResourceTile) {
+                Debug.Log("Resource tile found under miner");
+                return true;
+            }
+            Debug.Log("Resource tile not found under miner: " + minerPosition);
+            }
         }
-        return true;
-     }
+
+        Debug.Log("Space not clear by default statement");
+        return false;
+    }
 
     void SwitchBuildingType()
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            currentBuildingType = buildingPrefabs[0];
+            currentBuildingType = BuildingType.belt;
             Destroy(hologram);
             CreateHologram();
             ClearBeltHolograms();
@@ -356,7 +380,7 @@ public class BuildingPlacement : MonoBehaviour
         else
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            currentBuildingType = buildingPrefabs[1];
+            currentBuildingType = BuildingType.miner;
             Destroy(hologram);
             CreateHologram();
             ClearBeltHolograms();
@@ -364,7 +388,7 @@ public class BuildingPlacement : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.Alpha3))
         {
-            currentBuildingType = buildingPrefabs[2];
+            currentBuildingType = BuildingType.smelter;
             Destroy(hologram);
             CreateHologram();
             ClearBeltHolograms();
@@ -372,7 +396,7 @@ public class BuildingPlacement : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.Alpha4))
         {
-            currentBuildingType = buildingPrefabs[3];
+            currentBuildingType = BuildingType.constructor;
             Destroy(hologram);
             CreateHologram();
             ClearBeltHolograms();
@@ -384,7 +408,7 @@ public class BuildingPlacement : MonoBehaviour
     void CreateHologram()
     {
         GameObject newHologram;
-        GameObject building = currentBuildingType;
+        GameObject building = buildingPrefabs[(int)currentBuildingType];
         Vector3 position = SnapToGrid(Camera.main.ScreenToWorldPoint(Input.mousePosition), grid);
         position.z = -2;
 
@@ -460,14 +484,14 @@ public class BuildingPlacement : MonoBehaviour
 
         if (hologram != null)
         {
-            if (buildMode && currentBuildingType != belt)
+            if (buildMode && currentBuildingType != BuildingType.belt)
             {
                 hologram.transform.position = SnapToGrid(Camera.main.ScreenToWorldPoint(Input.mousePosition), grid);
                 if (Input.GetMouseButtonDown(0))
                 {
                     if (IsSpaceClear(hologram))
                     {
-                        Build(currentBuildingType);
+                        Build(buildingPrefabs[(int)currentBuildingType]);
                         BuildingPlaced.Invoke();
                     }
                 }

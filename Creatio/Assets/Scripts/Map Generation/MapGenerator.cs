@@ -59,7 +59,7 @@ public class MapGenerator : MonoBehaviour
                 tilemap.SetTile(new Vector3Int(x, y, 0), tile);      
                 //Debug.Log("Tile: " + tile.name + " at " + x + ", " + y);    
             }
-            Debug.Log("Row " + x + " generated");
+            // Debug.Log("Row " + x + " generated");
             yield return null;
         }
     }
@@ -94,7 +94,7 @@ public class MapGenerator : MonoBehaviour
                     Debug.LogWarning(currentResources + "-th Resource not found");
                 }
             }
-            Debug.Log("Row " + x + " Resources generated");
+            // Debug.Log("Row " + x + " Resources generated");
             yield return null;
         }
         Debug.Log("Resources generated: " + currentResources);

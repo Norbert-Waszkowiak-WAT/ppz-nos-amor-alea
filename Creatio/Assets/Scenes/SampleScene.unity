@@ -257,7 +257,7 @@ Transform:
   m_GameObject: {fileID: 472362841}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -766,13 +766,13 @@ MonoBehaviour:
   buildMode: 0
   deleteMode: 0
   grid: {fileID: 2083206358847962550}
+  resourceTilemap: {fileID: 1263597448}
   buildingPrefabs:
   - {fileID: 3194128810280030671, guid: 784e2a66897ce434a97d740846836b2e, type: 3}
   - {fileID: 6897251397518262625, guid: cb0b6b5e90ba3954f82848f4c3bbbd2f, type: 3}
   - {fileID: 5324823277787553918, guid: 5fb1c2f196f59d543a771404af24d4e8, type: 3}
   - {fileID: 3584221323302982092, guid: 0fc3b8eeb9be09e4480b3e594e18da25, type: 3}
-  belt: {fileID: 0}
-  currentBuildingType: {fileID: 0}
+  currentBuildingType: 0
 --- !u!1 &1525984769
 GameObject:
   m_ObjectHideFlags: 0

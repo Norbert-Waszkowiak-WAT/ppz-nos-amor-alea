@@ -74,12 +74,12 @@ public class PlayerController : MonoBehaviour
 
             else if (belt.transform.rotation.eulerAngles.z == 90)
             {
-                beltVelocity = new Vector2(0, -1) * speed;
+                beltVelocity = new Vector2(0, 1) * speed;
             }
 
             else if (belt.transform.rotation.eulerAngles.z == 270)
             {
-                beltVelocity = new Vector2(0, 1) * speed;
+                beltVelocity = new Vector2(0, -1) * speed;
             }
         }
 
