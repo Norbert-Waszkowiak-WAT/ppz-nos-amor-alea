@@ -935,7 +935,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 7dd5d4e3548391f41b302d4e16afb624, type: 2}
   tilemap: {fileID: 1201190151}
   resources:
-  - {fileID: 11400000, guid: 4a830f5f7fed01249accc3afc9ed3f6c, type: 2}
+  - {fileID: 11400000, guid: 4cc13926fb4f31d40b7b089a29f30e58, type: 2}
   resourceTilemap: {fileID: 1263597448}
   maxResources: 10
   width: 160
@@ -1097,6 +1097,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SpriteRenderer: {fileID: 2143234844}
   speed: 10
+  filter2D:
+    useTriggers: 0
+    useLayerMask: 0
+    useDepth: 0
+    useOutsideDepth: 0
+    useNormalAngle: 0
+    useOutsideNormalAngle: 0
+    layerMask:
+      serializedVersion: 2
+      m_Bits: 0
+    minDepth: 0
+    maxDepth: 0
+    minNormalAngle: 0
+    maxNormalAngle: 0
 --- !u!50 &2143234847
 Rigidbody2D:
   serializedVersion: 4
