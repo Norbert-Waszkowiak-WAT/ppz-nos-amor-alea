@@ -88,3 +88,10 @@ Narzędzia:
   *	możliwe występowanie bugów
   *	problemy z systemem zapisu
 
+
+**Koniec etapu 1**
+![image](https://github.com/user-attachments/assets/c32f4f9d-a634-4ae4-9549-086c5578debd)
+![image](https://github.com/user-attachments/assets/2116b44d-ede2-49e7-a199-e079a9eeba65)
+
+System Budowania i usuwania, proceduralna generacja mapy
+
