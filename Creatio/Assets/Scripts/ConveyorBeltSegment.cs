@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ConveyorBeltSegment : MonoBehaviour
 {
-    // Mateusz    -  zrob ze kurwa ta mape, system generacji
+    // Mateusz    -  zrob ze ta mape, system generacji
     // Agnieszka  -  tekstury itemow, pomoc przy mapie 
     // Blizniuk   -  tekstury budynkow, zakret pasa - 2 sprite renderery? 1 kratka na zakret, reszta prosty tile, animacja gracza i pasow
     // Filip      -  pomyslec nad itemami, przepisami i progresja - tier 1,2,3 - wrzucic itemy do .json
