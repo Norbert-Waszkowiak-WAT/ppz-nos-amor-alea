@@ -15,6 +15,7 @@ public class MapGenerator : MonoBehaviour
     public List<ResourceTile> resources;
     public Tilemap resourceTilemap;
     public int maxResources;
+    public int worldExtractionModifier;
 
 
     //public GameObject tilePrefab;
@@ -85,10 +86,10 @@ public class MapGenerator : MonoBehaviour
                 ResourceTile resourceTile = GetResource();
 
                 if(resourceTile != null) {
-                    resourceTile.SetPurity(Random.Range(0, 3));
+                    resourceTile.SetParams(Random.Range(0, 3), worldExtractionModifier);
                     resourceTilemap.SetTile(new Vector3Int(x, y, 0), resourceTile);
                     currentResources++;
-                    Debug.Log("Resource: " + resourceTile + " at " + x + ", " + y);
+                    //Debug.Log("Resource: " + resourceTile + " at " + x + ", " + y);
                 }
                 else {
                     Debug.LogWarning(currentResources + "-th Resource not found");
@@ -154,7 +155,7 @@ public class MapGenerator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        
         tilemap.size = new Vector3Int(width, height, 0);
 
         // tilemap.layoutGrid.transform.localScale = new Vector3(scale, scale, 1);

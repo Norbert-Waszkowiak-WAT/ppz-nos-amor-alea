@@ -5,42 +5,45 @@ using UnityEngine.Tilemaps;
 
 public class Miner : MonoBehaviour
 {
-    public int extractionRate;
-    public int outputBuffer;
-    public int resourceType;
-    public int purity;
+    [SerializeField] float extractionRate;
+    [SerializeField] int resourceType;
 
-    public Tilemap resourceTilemap;
+    public ResourceTile resourceTile;
+
+    ItemOutput itemOutput;
+    [SerializeField] float timer;
+
+
+
 
 
     // Start is called before the first frame update
     void Start()
     {
-        CheckResourceTile();
+        itemOutput = GetComponent<ItemOutput>();
+        itemOutput.Initialize(resourceType);
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        timer += Time.deltaTime;
+        if (timer >= (1/extractionRate))
+        {
+            //Debug.Log("Adding to spawner buffer");
+            itemOutput.AddToBuffer();
+            timer = 0f;
+        }
     }
 
     public void SetParams(ResourceTile resourceTile) {
-        resourceTile.GetParams(out purity, out resourceType);
-    }
-
-    void CheckResourceTile() {
-        Vector3Int minerPosition = resourceTilemap.WorldToCell(transform.position);
-        TileBase tile = (ResourceTile) resourceTilemap.GetTile(minerPosition);
-
-        if (tile is ResourceTile resourceTile)
-        {
-            SetParams(resourceTile);
-            Debug.Log($"Tile found under miner: {resourceTile.name}, Purity: {purity}, ResourceType: {resourceType}");
+        if(resourceTile == null) {
+            Debug.LogError("ResourceTile is null");
+            return;
         }
-        else
-        {
-            Debug.LogWarning("No resource tile found under miner.");
-        }
+
+        resourceTile.GetParams(out resourceType, out int inputExtractionRate);
+        this.resourceTile = resourceTile;
+        extractionRate = inputExtractionRate;
     }
 }

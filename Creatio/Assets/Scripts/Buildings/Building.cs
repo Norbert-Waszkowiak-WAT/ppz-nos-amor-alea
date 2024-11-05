@@ -16,6 +16,10 @@ public class Building : MonoBehaviour
     void Start()
     {
         sprite = GetComponent<SpriteRenderer>();
+        if(GetComponent<ItemOutput>() != null)
+        {
+            GetComponent<ItemOutput>().SetManager(manager);
+        }
     }
 
     // Update is called once per frame
@@ -55,7 +59,7 @@ public class Building : MonoBehaviour
 
     private void OnMouseEnter()
     {
-        if (manager.deleteMode)
+        if (manager != null && manager.deleteMode)
         {
             deleteMode = true;
             if (Input.GetKey(KeyCode.LeftControl))
@@ -67,7 +71,7 @@ public class Building : MonoBehaviour
 
     private void OnMouseOver()
     {
-        if (manager.deleteMode)
+        if (manager != null && manager.deleteMode)
         {
             deleteMode = true;
             if (Input.GetKey(KeyCode.LeftControl))

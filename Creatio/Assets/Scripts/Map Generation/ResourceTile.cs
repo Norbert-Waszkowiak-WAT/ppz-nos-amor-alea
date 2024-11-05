@@ -17,19 +17,20 @@ namespace UnityEngine.Tilemaps
         public Sprite[] m_Sprites; // Sprites depending on the purity of the resource
         public Resource resource; 
         [SerializeField] Purity purity;
+        [SerializeField] int extractionRate;
 
-        public void SetParams(int purity, int resource) {
+        public void SetParams(int purity,int worldExtractionModifier) {
             this.purity = (Purity) purity;
-            this.resource = (Resource) resource;
+            extractionRate = ((int) purity + 1) * worldExtractionModifier;
         }
 
         public void SetPurity(int purity) {
             this.purity = (Purity) purity;
         }
 
-        public void GetParams(out int purity, out int resource) {
-            purity = (int) this.purity;
+        public void GetParams(out int resource, out int extractionRate) {
             resource = (int) this.resource;
+            extractionRate = this.extractionRate;
         }
 
         private Sprite GetSprite()

@@ -62,25 +62,7 @@ public class PlayerController : MonoBehaviour
             belt = hitObject[0].gameObject;
 
             float speed = belt.GetComponent<ConveyorBeltSegment>().GetSpeed();
-            if(belt.transform.rotation.eulerAngles.z == 0)
-            {
-                beltVelocity = new Vector2(1, 0) * speed;
-            }
-
-            else if (belt.transform.rotation.eulerAngles.z == 180)
-            {
-                beltVelocity = new Vector2(-1, 0) * speed;
-            }
-
-            else if (belt.transform.rotation.eulerAngles.z == 90)
-            {
-                beltVelocity = new Vector2(0, 1) * speed;
-            }
-
-            else if (belt.transform.rotation.eulerAngles.z == 270)
-            {
-                beltVelocity = new Vector2(0, -1) * speed;
-            }
+            beltVelocity = belt.transform.right * speed;
         }
 
         if(hitObject.Count == 0)
