@@ -40,9 +40,9 @@ public class PlayerController : MonoBehaviour
     }
 
     void InputMove() {
-        moveVelocity = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")) * speed;
-        moveVelocity = Vector2.ClampMagnitude(moveVelocity, 1);
-        moveVelocity *= speed;
+        moveVelocity = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+        moveVelocity = moveVelocity.normalized;
+        moveVelocity = moveVelocity * speed;
 
         if (moveVelocity.x < 0)
         {
@@ -57,12 +57,12 @@ public class PlayerController : MonoBehaviour
     public void BeltMove() {
         hitObject.Clear();
         if(GetComponent<Collider2D>().OverlapCollider(filter2D, hitObject) != 0) {
-            Debug.Log("OnBelt");
+            //Debug.Log("OnBelt");
 
             belt = hitObject[0].gameObject;
 
             float speed = belt.GetComponent<ConveyorBeltSegment>().GetSpeed();
-            beltVelocity = belt.transform.right * speed;
+            beltVelocity = belt.transform.right * speed * 2;
         }
 
         if(hitObject.Count == 0)

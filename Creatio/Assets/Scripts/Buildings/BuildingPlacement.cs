@@ -193,6 +193,7 @@ public class BuildingPlacement : MonoBehaviour
             // Cancel belt placement
             isPlacingBelt = false;
             beltLength = 1;
+            RefreshHologram();
             Debug.Log("Belt placement cancelled");
             return;
         }
@@ -202,7 +203,7 @@ public class BuildingPlacement : MonoBehaviour
             Vector3 finalPosition = SnapToGrid(Camera.main.ScreenToWorldPoint(Input.mousePosition), grid);
             finalPosition = SnapToAxis(initialPosition, finalPosition);
             PlaceBeltHologram(initialPosition, finalPosition);
-            Debug.Log("is placing belt");
+            //Debug.Log("is placing belt");
             IsSpaceClear(hologram);
         } 
     }
@@ -230,7 +231,7 @@ public class BuildingPlacement : MonoBehaviour
         hologram.transform.position = start + direction * 0.5f;
 
         //hologram.transform.position = start + direction * ((beltLength - 1) / 2);
-        Debug.Log(direction * ((beltLength - 1) / 2));
+        //Debug.Log(direction * ((beltLength - 1) / 2));
         hologram.transform.rotation = Quaternion.LookRotation(Vector3.forward, direction);
         hologram.transform.rotation = Quaternion.Euler(0, 0, hologram.transform.rotation.eulerAngles.z + 90);
         hologram.GetComponent<SpriteRenderer>().size = new Vector2(beltLength, 0.75f);
@@ -356,6 +357,8 @@ public class BuildingPlacement : MonoBehaviour
             buildMode = !buildMode;
 
             if(buildMode) {
+                isPlacingBelt = false;
+                beltLength = 1;
                 hologram.SetActive(true);
                 RefreshHologram();
                 Debug.Log("Build mode entered");

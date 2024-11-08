@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 
 public class ConveyorBeltSegment : MonoBehaviour
@@ -54,18 +52,8 @@ public class ConveyorBeltSegment : MonoBehaviour
         itemDistances = new List<float>();
         items = new List<GameObject>();
 
-        initialGap = length;
         finalGap = 0;
         lastNonZeroGapIndex = -1;
-
-        if (length % 2 == 0) {
-            globalBeltBegin = transform.position - length / 2 * transform.right;
-            globalBeltEnd = transform.position + length / 2 * transform.right;
-        }
-        else {
-            globalBeltBegin =  transform.position - (length / 2 + 0.5f) * transform.right;
-            globalBeltEnd = transform.position + length / 2 * transform.right;
-        }
 
         Debug.Log(globalBeltBegin + " " + globalBeltEnd);
     }
@@ -83,29 +71,13 @@ public class ConveyorBeltSegment : MonoBehaviour
     
     private void UpdateNextBelt()
     {
-        Collider2D collider = Physics2D.OverlapCircle(NextBeltPosition(), 0.1f, filter2D.layerMask);
+        Collider2D collider = Physics2D.OverlapCircle(globalBeltEnd + transform.right * 0.5f, 0.1f, filter2D.layerMask);
 
         if (collider != null && collider != GetComponent<Collider2D>())
         {
             ConveyorBeltSegment potentialNextSegment = collider.GetComponent<ConveyorBeltSegment>();
 
-            Vector3 nextLengthOffset;
-            if (potentialNextSegment.length % 2 == 0)
-            {
-                nextLengthOffset = (potentialNextSegment.length / 2 - 0.5f) * potentialNextSegment.transform.right;
-            }
-            else
-            {
-                nextLengthOffset = potentialNextSegment.length / 2 * potentialNextSegment.transform.right;
-            }
-
-            Vector3 nextSegmentBegin = potentialNextSegment.transform.position - nextLengthOffset;
-            nextSegmentBegin.z = -2;
-
-            Vector3 position = NextBeltPosition();
-            position.z = -2;
-
-            if (potentialNextSegment != null && nextSegmentBegin == position)
+            if (potentialNextSegment != null && globalBeltEnd + transform.right * 0.5f == potentialNextSegment.globalBeltBegin + potentialNextSegment.transform.right * 0.5f)
             {
                 nextSegment = potentialNextSegment;
                 Debug.Log("Next segment found");
@@ -114,21 +86,6 @@ public class ConveyorBeltSegment : MonoBehaviour
         }
 
         nextSegment = null;
-    }
-
-    private Vector2 NextBeltPosition() 
-    {
-        Vector2 currentPosition = transform.position;
-        Vector2 lengthOffset;
-
-        if (length % 2 == 0) {
-            lengthOffset = (length / 2 + .5f) * transform.right;
-        }
-        else {
-            lengthOffset = (length / 2 + 1) * transform.right;
-        }
-
-        return currentPosition + lengthOffset;
     }
 
     public void AddItem(int itemID)
@@ -141,22 +98,22 @@ public class ConveyorBeltSegment : MonoBehaviour
             if (items.Count == 0)
             {
                 initialGap = distanceFromEnd;
-                itemDistances.Add(distanceFromEnd);
+                itemDistances.Add(distanceFromEnd); // Adjusted
             }
             else
             {
                 float previousDistance = 0; 
                 for(int i = 0; i < itemDistances.Count; i++) {
-                    previousDistance += itemDistances[i];
+                    previousDistance += itemDistances[i] + 0.5f; // Adjusted
                 }
 
-                itemDistances.Add(length - previousDistance);
+                itemDistances.Add(length - previousDistance - 0.5f); // Adjusted
                 finalGap = 0;
             }
     
             items.Add(itemObject);
     
-            if (lastNonZeroGapIndex == -1 && itemDistances[itemDistances.Count - 1] > 0.5f)
+            if (lastNonZeroGapIndex == -1 && itemDistances[itemDistances.Count - 1] > 0)
             {
                 lastNonZeroGapIndex = itemDistances.Count - 1;
             }
@@ -187,29 +144,20 @@ public class ConveyorBeltSegment : MonoBehaviour
         }
     }
     
-    public void AddItem(GameObject item)
+    public void AddItemFromBelt(GameObject item, float distanceFromPrev)
     {
-        float distanceFromEnd = length - 0.5f;
-    
-        if (items.Count == 0)
-        {
-            initialGap = distanceFromEnd;
-            itemDistances.Add(distanceFromEnd);
+        if(itemDistances.Count == 0) {
+            initialGap = length - 1.5f;
+            itemDistances.Add(initialGap);
         }
-        else
-        {
-            float previousDistance = 0; 
-            for(int i = 0; i < itemDistances.Count; i++) {
-                previousDistance += itemDistances[i];
-            }
+        else {
+            itemDistances.Add(finalGap - 0.5f);
+        }
 
-            itemDistances.Add(length - previousDistance);
-            finalGap = 0;
-        }
-    
+        finalGap = 0;
         items.Add(item);
     
-        if (lastNonZeroGapIndex == -1 && itemDistances[itemDistances.Count - 1] > 0.5f)
+        if (lastNonZeroGapIndex == -1 && itemDistances[itemDistances.Count - 1] > 0)
         {
             lastNonZeroGapIndex = itemDistances.Count - 1;
         }
@@ -246,62 +194,59 @@ public class ConveyorBeltSegment : MonoBehaviour
     {
         if (itemDistances.Count == 0) return;
 
-        if(nextSegment != null && itemDistances[0] <= -0.5f) {
-            PassItemToNextSegment(0);
-        }
-
-        if (initialGap > 0)
+        if (nextSegment == null)
         {
-            initialGap -= delta;
-            if (initialGap < 0) initialGap = 0;
-            finalGap += delta;
-            // if (finalGap > length - initialGap - itemDistances.Count * 0.5f) finalGap = length - initialGap - itemDistances.Count * 0.5f;
-            itemDistances[0] -= delta;
-        }
+            if (initialGap > 0)
+            {
+                initialGap -= delta;
+                itemDistances[0] -= delta;
 
-        else if (lastNonZeroGapIndex >= 0 && lastNonZeroGapIndex < itemDistances.Count)
-        {
-            itemDistances[lastNonZeroGapIndex] -= delta;
-            finalGap += delta;
-            if (finalGap > length - initialGap - itemDistances.Count * 0.5f) finalGap = length - initialGap - itemDistances.Count * 0.5f;
-
-            if (nextSegment == null && itemDistances[0] <= 0) {
+                if(itemDistances[0] < 0)
+                {
+                    itemDistances[0] = 0;
+                    initialGap = 0;
+                }
+                else finalGap += delta; 
+            }
+            else {
+                initialGap = 0;
                 itemDistances[0] = 0;
             }
-
-            if (itemDistances[lastNonZeroGapIndex] <= 0.5f)
-            {
-                itemDistances[lastNonZeroGapIndex] = 0.5f;
-                lastNonZeroGapIndex++;
-                return;
-            }
-            // gap 0 - end of segment.1st item
-            // gap 1 - 1st item.2nd item
-            // gap 3 - 2nd item.belt begin
-
         }
 
         else {
-            lastNonZeroGapIndex = -1;
+            initialGap -= delta;
+            itemDistances[0] -= delta;
+
+            if(itemDistances[0] <= -0.5f)
+            {
+                if(nextSegment.HasRoomOnBelt()) PassItemToNextSegment(0);
+                else {
+                    itemDistances[0] = -0.5f;
+                    initialGap = -0.5f;
+                }
+            }  
+            else finalGap += delta;                       
         }
 
-        if (itemDistances.Count > 0 && itemDistances[0] <= 0)
+        if (initialGap == 0 && lastNonZeroGapIndex >= 0 && lastNonZeroGapIndex < itemDistances.Count)
         {
-            if (nextSegment != null)
+            itemDistances[lastNonZeroGapIndex] -= delta;
+            finalGap += delta;
+            if (nextSegment == null && itemDistances[lastNonZeroGapIndex] <= 0)
             {
-                if (nextSegment.HasRoomOnBelt())
-                {
-                    if (itemDistances[0] < 0f) PassItemToNextSegment(0);
-                }
-                else
-                {
-                    itemDistances[0] = 0;
-                }
+                itemDistances[lastNonZeroGapIndex] = 0;
             }
-            else
+            if (itemDistances[lastNonZeroGapIndex] <= 0)
             {
-                itemDistances[0] = 0;
+                itemDistances[lastNonZeroGapIndex] = 0;
+                lastNonZeroGapIndex++;
+                return;
             }
+        }
+        else if (initialGap == 0)
+        {
+            lastNonZeroGapIndex = -1;
         }
     }
 
@@ -311,7 +256,7 @@ public class ConveyorBeltSegment : MonoBehaviour
         if (nextSegment != null)
         {
             nextSegment.enabled = true;
-            nextSegment.AddItem(items[index]);
+            nextSegment.AddItemFromBelt(items[index], itemDistances[index]);
             itemDistances.RemoveAt(index);
             items.RemoveAt(index);
 
@@ -320,7 +265,7 @@ public class ConveyorBeltSegment : MonoBehaviour
         }
         else
         {
-            itemDistances[index] = 0;
+            // itemDistances[index] = 0;
         }
 
         // if (lastNonZeroGapIndex == -1 && itemDistances[itemDistances.Count - 1] > 0.5f)
@@ -332,13 +277,21 @@ public class ConveyorBeltSegment : MonoBehaviour
     private void UpdateItemTransforms()
     {
         float cumulativeDistance = 0;
+
         if(itemDistances.Count == 0) return;
+
+        if(items[0] != null) {
+            cumulativeDistance += itemDistances[0];// Adjusted
+            itemPosition = globalBeltEnd - cumulativeDistance * transform.right;
+            itemPosition.z = -3;
+            items[0].transform.position = itemPosition;
+        }
         
-        for (int i = 0; i < items.Count; i++)
+        for (int i = 1; i < items.Count; i++)
         {
             if (items[i] == null) continue;
-    
-            cumulativeDistance += itemDistances[i];
+            
+            cumulativeDistance += itemDistances[i] + 0.5f; // Adjusted
             itemPosition = globalBeltEnd - cumulativeDistance * transform.right;
             itemPosition.z = -3;
     
@@ -375,10 +328,21 @@ public class ConveyorBeltSegment : MonoBehaviour
 
         buildingManager.BeltsModified.RemoveListener(UpdateNextBelt);
         buildingManager.BeltsModified.Invoke();
+        //Destroy(itemPrefab);
     }
 
-    public void Initialize(BuildingPlacement reference, int length) {
+    public void Initialize(BuildingPlacement reference, int param) {
         buildingManager = reference;
-        this.length = length;
+        length = param + 1;
+        initialGap = length;
+
+        if (length % 2 == 0) {
+            globalBeltBegin = transform.position - (length / 2 - 0.5f) * transform.right;
+            globalBeltEnd = transform.position + (length / 2 - 0.5f) * transform.right;
+        }
+        else {
+            globalBeltBegin =  transform.position - (length) / 2 * transform.right;
+            globalBeltEnd = transform.position + (length) / 2 * transform.right;
+        }
     }
 }
