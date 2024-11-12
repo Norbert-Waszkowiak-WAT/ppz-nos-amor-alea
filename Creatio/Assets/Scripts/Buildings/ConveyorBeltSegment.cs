@@ -17,6 +17,7 @@ public class ConveyorBeltSegment : MonoBehaviour
     // public GameObject player;
     public GameObject itemPrefab; //object used to Instantiate items as game objects;
     [SerializeField] ConveyorBeltSegment nextSegment = null; // Reference to the next segment
+    [SerializeField] ItemInput itemInput = null; // Reference to the neighboring item input
     [SerializeField] float delta; // Distance to move items each frame, less = higher fps
     public int length; 
 
@@ -41,13 +42,13 @@ public class ConveyorBeltSegment : MonoBehaviour
 
     void Start()
     {
-        if(buildingManager != null) buildingManager.BeltsModified.AddListener(UpdateNextBelt);
+        if(buildingManager != null) buildingManager.BuildingPlaced.AddListener(UpdateNext);
 
         filter2D = new ContactFilter2D();
-        filter2D.SetLayerMask(LayerMask.GetMask("ConveyorBelts"));
+        filter2D.SetLayerMask(LayerMask.GetMask("ConveyorBelts") | (LayerMask.GetMask("Buildings")));
         filter2D.useLayerMask = true;
 
-        UpdateNextBelt();
+        UpdateNext();
 
         itemDistances = new List<float>();
         items = new List<GameObject>();
@@ -69,19 +70,25 @@ public class ConveyorBeltSegment : MonoBehaviour
         else enabled = false;
     }
     
-    private void UpdateNextBelt()
+    private void UpdateNext()
     {
         Collider2D collider = Physics2D.OverlapCircle(globalBeltEnd + transform.right * 0.5f, 0.1f, filter2D.layerMask);
 
         if (collider != null && collider != GetComponent<Collider2D>())
         {
-            ConveyorBeltSegment potentialNextSegment = collider.GetComponent<ConveyorBeltSegment>();
-
-            if (potentialNextSegment != null && globalBeltEnd + transform.right * 0.5f == potentialNextSegment.globalBeltBegin + potentialNextSegment.transform.right * 0.5f)
-            {
-                nextSegment = potentialNextSegment;
-                Debug.Log("Next segment found");
+            if(collider.GetComponent<ItemInput>() != null) {
+                itemInput = collider.GetComponent<ItemInput>();
                 return;
+            }
+            
+            if(collider.GetComponent<ConveyorBeltSegment>() != null) {
+                ConveyorBeltSegment potentialNextSegment = collider.GetComponent<ConveyorBeltSegment>();
+                if (globalBeltEnd + transform.right * 0.5f == potentialNextSegment.globalBeltBegin + potentialNextSegment.transform.right * 0.5f)
+                {
+                    nextSegment = potentialNextSegment;
+                    Debug.Log("Next segment found");
+                    return;
+                }
             }
         }
 
@@ -110,7 +117,8 @@ public class ConveyorBeltSegment : MonoBehaviour
                 itemDistances.Add(length - previousDistance - 0.5f); // Adjusted
                 finalGap = 0;
             }
-    
+
+            itemObject.GetComponent<ItemDataLocal>().id = itemID;
             items.Add(itemObject);
     
             if (lastNonZeroGapIndex == -1 && itemDistances[itemDistances.Count - 1] > 0)
@@ -144,7 +152,7 @@ public class ConveyorBeltSegment : MonoBehaviour
         }
     }
     
-    public void AddItemFromBelt(GameObject item, float distanceFromPrev)
+    public void AddItemFromBelt(GameObject item)
     {
         if(itemDistances.Count == 0) {
             initialGap = length - 1.5f;
@@ -194,7 +202,7 @@ public class ConveyorBeltSegment : MonoBehaviour
     {
         if (itemDistances.Count == 0) return;
 
-        if (nextSegment == null)
+        if (nextSegment == null && itemInput == null)
         {
             if (initialGap > 0)
             {
@@ -220,7 +228,11 @@ public class ConveyorBeltSegment : MonoBehaviour
 
             if(itemDistances[0] <= -0.5f)
             {
-                if(nextSegment.HasRoomOnBelt()) PassItemToNextSegment(0);
+                if(nextSegment != null && nextSegment.HasRoomOnBelt()) PassItemToNextSegment(0);
+                else if (itemInput != null && itemInput.TakeItem(items[0])) {
+                    itemDistances.RemoveAt(0);
+                    items.RemoveAt(0);
+                }
                 else {
                     itemDistances[0] = -0.5f;
                     initialGap = -0.5f;
@@ -256,7 +268,7 @@ public class ConveyorBeltSegment : MonoBehaviour
         if (nextSegment != null)
         {
             nextSegment.enabled = true;
-            nextSegment.AddItemFromBelt(items[index], itemDistances[index]);
+            nextSegment.AddItemFromBelt(items[index]);
             itemDistances.RemoveAt(index);
             items.RemoveAt(index);
 
@@ -326,8 +338,8 @@ public class ConveyorBeltSegment : MonoBehaviour
 
         if(buildingManager == null) return;
 
-        buildingManager.BeltsModified.RemoveListener(UpdateNextBelt);
-        buildingManager.BeltsModified.Invoke();
+        buildingManager.BuildingPlaced.RemoveListener(UpdateNext);
+        buildingManager.BuildingPlaced.Invoke();
         //Destroy(itemPrefab);
     }
 

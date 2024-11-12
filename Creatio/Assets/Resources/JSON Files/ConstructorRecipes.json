@@ -1,0 +1,20 @@
+[
+    {
+        "recipeId": 0,
+        "inputId": 1,
+        "inputAmount": 6,
+        "outputId": 1,
+        "outputAmount": 5,
+        "name": "Iron Ingot",
+        "time": 5.0
+    },
+    {
+        "recipeId": 1,
+        "inputId": 2,
+        "inputAmount": 5,
+        "outputId": 3,
+        "outputAmount": 5,
+        "name": "Steel Plate",
+        "time": 2.5
+    }
+]

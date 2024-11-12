@@ -9,7 +9,7 @@ using UnityEngine.Tilemaps;
 public class BuildingPlacement : MonoBehaviour
 {
     public UnityEngine.Events.UnityEvent BuildingPlaced;
-    public UnityEngine.Events.UnityEvent BeltsModified;
+    //public UnityEngine.Events.UnityEvent BeltsModified;
 
     public bool buildMode;
     public bool deleteMode;
@@ -184,7 +184,7 @@ public class BuildingPlacement : MonoBehaviour
                 isPlacingBelt = false;
                 UpdateHologramPosition();
                 RefreshHologram();
-                BeltsModified.Invoke();
+                BuildingPlaced.Invoke();
                 return;
             } 
         }

@@ -8,7 +8,7 @@ public class ItemOutput : MonoBehaviour
 {
     public BuildingPlacement buildingPlacement; // Reference to the BuildingPlacement script
     [SerializeField] private int spawnItem; // Reference to the item prefab
-    [SerializeField] int buffer; // Number of items in the buffer
+    public int buffer; // Number of items in the buffer
     public int maxBuffer;
     static ContactFilter2D filter2D;
     Vector3 spawnPoint; // The point where the item will be instantiated
@@ -20,7 +20,7 @@ public class ItemOutput : MonoBehaviour
 
     private void Start()
     {
-        if(buildingPlacement != null ) buildingPlacement.BeltsModified.AddListener(CheckForNeighboringBelt);
+        if(buildingPlacement != null ) buildingPlacement.BuildingPlaced.AddListener(CheckForNeighboringBelt);
 
         filter2D = new ContactFilter2D();
         filter2D.SetLayerMask(LayerMask.GetMask("ConveyorBelts"));
