@@ -1,0 +1,16 @@
+[
+    {
+        "id": 0,
+        "sprite": "Sprites/Items/Stone",
+        "stackAmount": 100,
+        "name": "Stone",
+        "description": "Raw unprocessed stone. Can be used to craft concrete."
+    },
+    {
+        "id": 1,
+        "sprite": "Sprites/Items/IronOre",
+        "stackAmount": 100,
+        "name": "Iron Ore",
+        "description": "Raw iron ore. Can be smelted into iron ingots."
+    }
+]

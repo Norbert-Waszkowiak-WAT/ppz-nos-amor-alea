@@ -4,17 +4,15 @@ using UnityEngine.UIElements;
 // TODO
 // Spawn objects using polling method
 
-public class IronIngotSpawner : MonoBehaviour
+public class ItemOutput : MonoBehaviour
 {
     public BuildingPlacement buildingPlacement; // Reference to the BuildingPlacement script
-    public string spawnItem; // Reference to the item prefab
-    public float spawnInterval = 2.0f; // Time interval between spawns [s]
-    [SerializeField] float timer;
-
-
+    [SerializeField] private int spawnItem; // Reference to the item prefab
+    public int buffer; // Number of items in the buffer
+    public int maxBuffer;
     static ContactFilter2D filter2D;
     Vector3 spawnPoint; // The point where the item will be instantiated
-    ConveyorBeltSegment targetBelt = null; // Reference to the neighboring belt
+    public ConveyorBeltSegment targetBelt = null; // Reference to the neighboring belt
     // GameObject item; // Reference to the spawned item
 
 
@@ -22,7 +20,7 @@ public class IronIngotSpawner : MonoBehaviour
 
     private void Start()
     {
-        buildingPlacement.BeltsModified.AddListener(CheckForNeighboringBelt);
+        if(buildingPlacement != null ) buildingPlacement.BuildingPlaced.AddListener(CheckForNeighboringBelt);
 
         filter2D = new ContactFilter2D();
         filter2D.SetLayerMask(LayerMask.GetMask("ConveyorBelts"));
@@ -31,22 +29,24 @@ public class IronIngotSpawner : MonoBehaviour
 
     private void Update()
     {
-        timer += Time.deltaTime;
-        if (timer >= spawnInterval)
+        if(buffer > 0)
         {
-            SpawnIronIngot();
-            timer = 0f;
+            SpawnItem();
         }
     }
 
-    private void SpawnIronIngot()
+    private void SpawnItem()
     {
-        if (spawnItem != null && spawnPoint != null && targetBelt != null && targetBelt.HasRoomOnBelt())
+        if(targetBelt == null || spawnPoint == null) return;
+        targetBelt.enabled = true;
+        
+        if (targetBelt.HasRoomOnBelt())
         {
             // item = Instantiate(spawnItem, spawnPoint, Quaternion.identity);
             //Debug.Log("Iron ingot spawned");
             // Optionally, you can add the new ingot to the target belt's item list
-            targetBelt.AddItem("iron_ingot", 0f); // Assuming 0f is the initial distance for the new item
+            targetBelt.AddItem(spawnItem); // Assuming 0f is the initial distance for the new item
+            buffer--;
         }
 
         else if(targetBelt != null && !targetBelt.HasRoomOnBelt())
@@ -71,5 +71,23 @@ public class IronIngotSpawner : MonoBehaviour
         {
             targetBelt = null;
         }
+    }
+
+    public void Initialize(int item)
+    {
+        spawnItem = item;
+    }
+
+    public void SetManager(BuildingPlacement reference)
+    {
+        buildingPlacement = reference;
+    }
+    public bool AddToBuffer()
+    {
+        if(buffer < maxBuffer) {
+            buffer++;
+            return true;
+        }
+        else return false;
     }
 }

@@ -10,12 +10,21 @@ public class MapGenerator : MonoBehaviour
     public Tilemap tilemap;
     private Tile tile;
 
+
+    [Header("Resources")]
+    public List<ResourceTile> resources;
+    public Tilemap resourceTilemap;
+    public int maxResources;
+    public int worldExtractionModifier;
+
+
     //public GameObject tilePrefab;
 
     [Header("Dimensions")]
-    public int width = 50;
-    public int height = 50;
+    public int width;
+    public int height;
     public float scale = 1.0f;
+    public int edgeBuffer;
     public Vector2 offset;
 
 
@@ -30,7 +39,7 @@ public class MapGenerator : MonoBehaviour
     private float[,] heatMap;
 
 
-    void GenerateMap ()
+    IEnumerator GenerateMap ()
     {
         RandomizeWaves(heightWaves);
         RandomizeWaves(moistureWaves);
@@ -49,9 +58,47 @@ public class MapGenerator : MonoBehaviour
             {
                 tile = GetBiome(heightMap[x, y], moistureMap[x, y], heatMap[x, y]).GetTile();
                 tilemap.SetTile(new Vector3Int(x, y, 0), tile);      
-                Debug.Log("Tile: " + tile.name + " at " + x + ", " + y);    
+                //Debug.Log("Tile: " + tile.name + " at " + x + ", " + y);    
             }
+            // Debug.Log("Row " + x + " generated");
+            yield return null;
         }
+    }
+
+    IEnumerator generateResources(int maxResources) {
+
+        if(maxResources == 0 || resources.Count == 0) {
+            Debug.LogWarning("No resources to generate or maxResources is 0");
+            yield break;
+            //StopCoroutine("generateResources");
+        }
+
+        int currentResources = 0;
+
+        for(int x = edgeBuffer; x < width - edgeBuffer; x++)
+        {
+            for(int y = edgeBuffer; y < height - edgeBuffer; y++)
+            {   
+                if(currentResources >= maxResources || Random.Range(0f, 100f) > 0.05f) {
+                    continue;
+                }
+
+                ResourceTile resourceTile = GetResource();
+
+                if(resourceTile != null) {
+                    resourceTile.SetParams(Random.Range(0, 3), worldExtractionModifier);
+                    resourceTilemap.SetTile(new Vector3Int(x, y, 0), resourceTile);
+                    currentResources++;
+                    //Debug.Log("Resource: " + resourceTile + " at " + x + ", " + y);
+                }
+                else {
+                    Debug.LogWarning(currentResources + "-th Resource not found");
+                }
+            }
+            // Debug.Log("Row " + x + " Resources generated");
+            yield return null;
+        }
+        Debug.Log("Resources generated: " + currentResources);
     }
 
     void RandomizeWaves (Wave[] waves)
@@ -94,20 +141,31 @@ public class MapGenerator : MonoBehaviour
         if(biomeToReturn == null)
             biomeToReturn = biomes[0];
         return biomeToReturn;
+    }
 
+    ResourceTile GetResource ()
+    {
+        if(resources.Count == 0)
+            return null;
+
+        return resources[/* Random.Range(0, resources.Count) */ 0];
     }
 
 
     // Start is called before the first frame update
     void Start()
     {
+        
         tilemap.size = new Vector3Int(width, height, 0);
 
         // tilemap.layoutGrid.transform.localScale = new Vector3(scale, scale, 1);
         // Debug.Log(tilemap.size + " " + tilemap.layoutGrid.transform.localScale);
 
-    
-        GenerateMap();
+        maxResources += Random.Range(-2, 2);
+        StartCoroutine(GenerateMap());
+
+        StartCoroutine(generateResources(maxResources));
+
     }
 
     // Update is called once per frame
