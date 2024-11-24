@@ -62,9 +62,9 @@ Narzędzia:
 
   Etap 3: Eksploracja
 
-  *	Implementacja walki
+  *	~~Implementacja walki~~ - zmiana konceptu gry
   *	Implementacja systemu progresji
-  *	Implementacja fauny oraz AI
+  *	~~Implementacja fauny oraz AI~~ - zmiana konceptu gry
   *	Implementacja energii
   * Implementacja systemu zapisu
 
@@ -72,7 +72,6 @@ Narzędzia:
   Etap 4: Finał
   
   *	Bugfixing
-  *	"Projekt" 
   *	Soundtrack
   *	Fabuła
 
