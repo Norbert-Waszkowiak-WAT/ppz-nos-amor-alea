@@ -57,7 +57,6 @@ Narzędzia:
   * Implementacja UI
   *	Implementacja ekwipunku gracza
   *	Implementacja funkcjonalności maszyn
-  * Tworzenie tekstur i przepisów części
 
 
   Etap 3: Eksploracja
@@ -70,7 +69,8 @@ Narzędzia:
 
 
   Etap 4: Finał
-  
+
+  * Tworzenie tekstur i przepisów części
   *	Bugfixing
   *	Soundtrack
   *	Fabuła
