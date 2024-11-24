@@ -34,6 +34,8 @@ public class ConveyorBeltSegment : MonoBehaviour
     Vector3 globalBeltEnd;
     Vector3 itemPosition;
 
+    public bool isTaken = false;
+
     public float initialGap = 0f; // Gap between beginning of the segment and first item
     public float finalGap = 0f;
     [SerializeField] private int lastNonZeroGapIndex = -1;
@@ -45,7 +47,7 @@ public class ConveyorBeltSegment : MonoBehaviour
         if(buildingManager != null) buildingManager.BuildingPlaced.AddListener(UpdateNext);
 
         filter2D = new ContactFilter2D();
-        filter2D.SetLayerMask(LayerMask.GetMask("ConveyorBelts") | (LayerMask.GetMask("Buildings")));
+        filter2D.SetLayerMask(LayerMask.GetMask("ConveyorBelts") | (LayerMask.GetMask("BuildingInputs")));
         filter2D.useLayerMask = true;
 
         UpdateNext();
@@ -72,20 +74,31 @@ public class ConveyorBeltSegment : MonoBehaviour
     
     private void UpdateNext()
     {
-        Collider2D collider = Physics2D.OverlapCircle(globalBeltEnd + transform.right * 0.5f, 0.1f, filter2D.layerMask);
+        Collider2D collider = Physics2D.OverlapCircle(globalBeltEnd + transform.right * 0.25f, 0.1f, filter2D.layerMask);
 
         if (collider != null && collider != GetComponent<Collider2D>())
         {
-            if(collider.GetComponent<ItemInput>() != null) {
+            if(collider.GetComponent<ItemInput>() != null && collider.GetComponent<ItemInput>().transform.right == transform.right) {
                 itemInput = collider.GetComponent<ItemInput>();
                 return;
             }
             
+            // if(collider.GetComponent<Merger>() != null) {
+            //      merger = collider.GetComponent<Merger>();
+            //     if(merger.transform.right == transform.right) {
+            //         nextSegment = merger.GetNextSegment();
+            //         nextSegment.isTaken = true;
+            //         Debug.Log("Next segment found");
+            //         return;
+            //     }
+            // }
+
             if(collider.GetComponent<ConveyorBeltSegment>() != null) {
                 ConveyorBeltSegment potentialNextSegment = collider.GetComponent<ConveyorBeltSegment>();
-                if (globalBeltEnd + transform.right * 0.5f == potentialNextSegment.globalBeltBegin + potentialNextSegment.transform.right * 0.5f)
+                if (!potentialNextSegment.isTaken && globalBeltEnd + transform.right * 0.5f == potentialNextSegment.globalBeltBegin + potentialNextSegment.transform.right * 0.5f)
                 {
                     nextSegment = potentialNextSegment;
+                    nextSegment.isTaken = true;
                     Debug.Log("Next segment found");
                     return;
                 }
@@ -273,7 +286,8 @@ public class ConveyorBeltSegment : MonoBehaviour
             items.RemoveAt(index);
 
             lastNonZeroGapIndex = 0;
-            initialGap = itemDistances.First();
+            if(itemDistances.Count > 0) initialGap = itemDistances.First();
+            else initialGap = length;
         }
         else
         {
@@ -340,6 +354,8 @@ public class ConveyorBeltSegment : MonoBehaviour
 
         buildingManager.BuildingPlaced.RemoveListener(UpdateNext);
         buildingManager.BuildingPlaced.Invoke();
+
+        if(nextSegment != null) nextSegment.isTaken = false;
         //Destroy(itemPrefab);
     }
 

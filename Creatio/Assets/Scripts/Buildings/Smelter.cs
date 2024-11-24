@@ -1,14 +1,15 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Constructor : MonoBehaviour
+public class Smelter : MonoBehaviour
 {
-    static ConstructorRecipeLoader recipeLoader;
-    ConstructorRecipe selectedRecipe;
-    public ItemOutput itemOutput;
+    static SmelterRecipeLoader recipeLoader;
+    SmelterRecipe selectedRecipe;
+
     public ItemBuffer buffer;
+
+    public ItemOutput itemOutput;
     bool isCrafting = false;
 
     [SerializeField] float timer;
@@ -20,13 +21,11 @@ public class Constructor : MonoBehaviour
         {
             FindRecipeLoader();
         }
-        
-        buffer = GetComponent<ItemBuffer>();
-        buffer.itemInputs = new Dictionary<int, int>();
 
         itemOutput = transform.Find("ItemOutput").GetComponent<ItemOutput>();
 
-        selectedRecipe = recipeLoader.GetConstructorRecipe(0);
+        selectedRecipe = recipeLoader.GetSmelterRecipe(0);
+
         itemOutput.Initialize(selectedRecipe.outputId, GetComponent<Building>().manager);
 
         buffer.itemInputs.Add(selectedRecipe.inputId, 0);
@@ -41,8 +40,7 @@ public class Constructor : MonoBehaviour
         if (buffer.itemInputs[selectedRecipe.inputId] < selectedRecipe.inputAmount) {
             return;
         }
-        //Debug.Log("Adding to spawner buffer");
-        // Start crafting animation
+        
         isCrafting = true;
         StartCoroutine(Craft());
     }
@@ -68,7 +66,7 @@ public class Constructor : MonoBehaviour
     {
         if (recipeLoader != null)
         {
-            selectedRecipe = recipeLoader.GetConstructorRecipe(inputId);
+            selectedRecipe = recipeLoader.GetSmelterRecipe(inputId);
             if (selectedRecipe != null)
             {
                 Debug.Log($"Selected Recipe: {selectedRecipe.name}");
@@ -90,7 +88,7 @@ public class Constructor : MonoBehaviour
 
         if (recipeLoaderObject != null)
         {
-            recipeLoader = recipeLoaderObject.GetComponent<ConstructorRecipeLoader>();
+            recipeLoader = recipeLoaderObject.GetComponent<SmelterRecipeLoader>();
         }    
     }
 }

@@ -13,6 +13,7 @@ public class ItemOutput : MonoBehaviour
     static ContactFilter2D filter2D;
     Vector3 spawnPoint; // The point where the item will be instantiated
     public ConveyorBeltSegment targetBelt = null; // Reference to the neighboring belt
+
     // GameObject item; // Reference to the spawned item
 
 
@@ -20,11 +21,11 @@ public class ItemOutput : MonoBehaviour
 
     private void Start()
     {
-        if(buildingPlacement != null ) buildingPlacement.BuildingPlaced.AddListener(CheckForNeighboringBelt);
-
         filter2D = new ContactFilter2D();
         filter2D.SetLayerMask(LayerMask.GetMask("ConveyorBelts"));
         filter2D.useLayerMask = true;
+
+        if(buildingPlacement != null ) buildingPlacement.BuildingPlaced.AddListener(CheckForNeighboringBelt);
     }
 
     private void Update()
@@ -56,8 +57,9 @@ public class ItemOutput : MonoBehaviour
     }
 
     private void CheckForNeighboringBelt()
-    {
+    { 
         Collider2D collider = Physics2D.OverlapCircle(transform.position + transform.right, 0.1f, filter2D.layerMask);
+        Debug.Log(transform.position + transform.right);
         
         if (collider != null && collider != GetComponent<Collider2D>())
         {
@@ -73,9 +75,10 @@ public class ItemOutput : MonoBehaviour
         }
     }
 
-    public void Initialize(int item)
+    public void Initialize(int item, BuildingPlacement reference)
     {
         spawnItem = item;
+        buildingPlacement = reference;
     }
 
     public void SetManager(BuildingPlacement reference)

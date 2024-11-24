@@ -36,7 +36,6 @@ public class ItemData
 {
     public int id;
     public string sprite;
-    public int stackAmount;
     public string name;
     public string description;
 }

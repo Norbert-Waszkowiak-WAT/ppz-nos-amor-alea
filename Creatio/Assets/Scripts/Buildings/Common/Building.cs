@@ -16,10 +16,6 @@ public class Building : MonoBehaviour
     void Start()
     {
         sprite = GetComponent<SpriteRenderer>();
-        if(GetComponent<ItemOutput>() != null)
-        {
-            GetComponent<ItemOutput>().SetManager(manager);
-        }
     }
 
     // Update is called once per frame

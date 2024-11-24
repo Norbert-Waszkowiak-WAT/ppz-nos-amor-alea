@@ -81,7 +81,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 2
-  m_Size: {x: 1, y: 0.75}
+  m_Size: {x: 0.95, y: 0.75}
   m_AdaptiveModeThreshold: 0.415
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -124,7 +124,7 @@ BoxCollider2D:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 1, y: 0.75}
-    newSize: {x: 1, y: 0.75}
+    newSize: {x: 0.95, y: 0.75}
     adaptiveTilingThreshold: 0.415
     drawMode: 2
     adaptiveTiling: 0
@@ -160,9 +160,11 @@ MonoBehaviour:
   buildingManager: {fileID: 0}
   itemPrefab: {fileID: 7520525731364765289, guid: e6579c19ce0f25348bb8c471a428ff0b, type: 3}
   nextSegment: {fileID: 0}
+  itemInput: {fileID: 0}
   delta: 0
   length: 0
   itemDistances: []
   items: []
   initialGap: 0
   finalGap: 0
+  lastNonZeroGapIndex: -1
