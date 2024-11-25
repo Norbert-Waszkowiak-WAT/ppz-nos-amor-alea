@@ -47,7 +47,6 @@ Narzędzia:
 
   *	Implementacja sterowania postacią
   *	Implementacja systemu budowania
-  *	Tekstury i animcje postaci oraz budynków
   *	Mapa
   *	Zasoby naturalne
 
@@ -70,6 +69,7 @@ Narzędzia:
 
   Etap 4: Finał
 
+  *	Tekstury i animcje postaci oraz budynków
   * Tworzenie tekstur i przepisów części
   *	Bugfixing
   *	Soundtrack
