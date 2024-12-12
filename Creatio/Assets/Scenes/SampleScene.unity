@@ -750,22 +750,22 @@ MonoBehaviour:
   resourceTilemap: {fileID: 1263597448}
   maxResources: 10
   worldExtractionModifier: 1
-  width: 160
-  height: 160
+  width: 512
+  height: 512
   scale: 1
   edgeBuffer: 8
   offset: {x: 0, y: 0}
   heightWaves:
   - seed: 56
-    frequency: 0.05
-    amplitude: 2
+    frequency: 0.001
+    amplitude: 0.4
   - seed: 132
-    frequency: 0.1
-    amplitude: 5
+    frequency: 0.0004
+    amplitude: 0.8
   moistureWaves:
   - seed: 621
-    frequency: 0.03
-    amplitude: 1
+    frequency: 0.01
+    amplitude: 0.7
   - seed: 144
     frequency: 0.02
     amplitude: 0.2

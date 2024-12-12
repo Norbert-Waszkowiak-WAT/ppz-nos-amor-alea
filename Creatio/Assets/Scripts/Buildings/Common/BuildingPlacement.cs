@@ -16,6 +16,7 @@ public class BuildingPlacement : MonoBehaviour
     public bool deleteMode;
     public Grid grid;
     public Tilemap resourceTilemap;
+    public Tilemap map;
 
     
 
@@ -263,7 +264,8 @@ public class BuildingPlacement : MonoBehaviour
         }
     }
     bool IsSpaceClear(GameObject building)
-    {  List<Collider2D> colliders = new List<Collider2D>();
+    {         
+        List<Collider2D> colliders = new List<Collider2D>();
         if(building.GetComponent<Collider2D>().OverlapCollider(filter, colliders) == 0)
         {
             if(currentBuildingType != BuildingType.miner) {

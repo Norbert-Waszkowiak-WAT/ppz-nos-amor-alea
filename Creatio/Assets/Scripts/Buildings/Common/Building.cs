@@ -12,6 +12,8 @@ public class Building : MonoBehaviour
     bool groupDeleteMode = false;
     SpriteRenderer sprite;
 
+    bool currentDeleteMode = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -29,7 +31,11 @@ public class Building : MonoBehaviour
             {
                 deleteMode = false;
                 groupDeleteMode = false;
-                sprite.color = new Color(1f, 1f, 1f, 1f);
+                if(manager.deleteMode != currentDeleteMode)
+                {
+                    sprite.color = new Color(1f, 1f, 1f, 1f);
+                    currentDeleteMode = manager.deleteMode;
+                }
             }
 
             else if (deleteMode || groupDeleteMode)
@@ -41,10 +47,10 @@ public class Building : MonoBehaviour
                 }
             }
 
-            else 
-            {
-                sprite.color = new Color(1f, 1f, 1f, 1f);
-            }
+            // else 
+            // {
+            //     sprite.color = new Color(1f, 1f, 1f, 1f);
+            // }
         }
 
     }
@@ -67,7 +73,19 @@ public class Building : MonoBehaviour
 
     private void OnMouseOver()
     {
-        if (manager != null && manager.deleteMode)
+        if(manager == null) return;
+
+        if(!manager.buildMode && !manager.deleteMode)
+        {
+            Debug.Log("Building.cs: OnMouseOver");
+            sprite.color = new Color(0.5f, 1f, 0.5f, 1f); 
+            if (Input.GetMouseButtonDown(1))
+            {
+                //OpenUI();
+            }
+        }
+
+        if (manager.deleteMode)
         {
             deleteMode = true;
             if (Input.GetKey(KeyCode.LeftControl))
@@ -85,10 +103,11 @@ public class Building : MonoBehaviour
         if (!groupDeleteMode)
         {
             deleteMode = false;
+            sprite.color = new Color(1f, 1f, 1f, 1f); 
         }
     }
 
-        public void SetDeleteMode(bool mode)
+    public void SetDeleteMode(bool mode)
     {
         deleteMode = mode;
     }

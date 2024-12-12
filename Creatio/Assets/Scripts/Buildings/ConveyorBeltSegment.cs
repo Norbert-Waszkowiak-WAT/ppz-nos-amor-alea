@@ -30,8 +30,8 @@ public class ConveyorBeltSegment : MonoBehaviour
     [SerializeField] List<float> itemDistances; // Distances between items
     [SerializeField] List<GameObject> items; // GameObjects representing the items
 
-    Vector3 globalBeltBegin;
-    Vector3 globalBeltEnd;
+    public Vector3 globalBeltBegin;
+    public Vector3 globalBeltEnd;
     Vector3 itemPosition;
 
     public bool isTaken = false;
@@ -39,6 +39,8 @@ public class ConveyorBeltSegment : MonoBehaviour
     public float initialGap = 0f; // Gap between beginning of the segment and first item
     public float finalGap = 0f;
     [SerializeField] private int lastNonZeroGapIndex = -1;
+
+    Renderer beltRenderer;
 
     // public int lastNonZeroGapIndex = -1; // Index of the last non-zero gap
 
@@ -54,6 +56,7 @@ public class ConveyorBeltSegment : MonoBehaviour
 
         itemDistances = new List<float>();
         items = new List<GameObject>();
+        beltRenderer = GetComponent<Renderer>();
 
         finalGap = 0;
         lastNonZeroGapIndex = -1;
@@ -66,7 +69,7 @@ public class ConveyorBeltSegment : MonoBehaviour
         if(itemDistances.Count > 0) {
             delta = moveSpeed * Time.deltaTime;
             MoveItems(delta);
-            UpdateItemTransforms();
+            if(beltRenderer.isVisible) UpdateItemTransforms();
         }
 
         else enabled = false;
@@ -74,10 +77,24 @@ public class ConveyorBeltSegment : MonoBehaviour
     
     private void UpdateNext()
     {
-        Collider2D collider = Physics2D.OverlapCircle(globalBeltEnd + transform.right * 0.25f, 0.1f, filter2D.layerMask);
+        if(nextSegment != null && nextSegment.gameObject != null) return;
+        if(itemInput != null && itemInput.gameObject != null) return;
+        
+        Collider2D collider = Physics2D.OverlapCircle(globalBeltEnd + transform.right * 0.5f, 0.1f, filter2D.layerMask);
 
         if (collider != null && collider != GetComponent<Collider2D>())
         {
+            if(collider.GetComponent<ConveyorBeltSegment>() != null) {
+                ConveyorBeltSegment potentialNextSegment = collider.GetComponent<ConveyorBeltSegment>();
+                if (!potentialNextSegment.isTaken && globalBeltEnd + transform.right * 0.5f == potentialNextSegment.globalBeltBegin + potentialNextSegment.transform.right * 0.5f)
+                {
+                    nextSegment = potentialNextSegment;
+                    nextSegment.isTaken = true;
+                    Debug.Log("Next segment found");
+                    return;
+                }
+            }
+
             if(collider.GetComponent<ItemInput>() != null && collider.GetComponent<ItemInput>().transform.right == transform.right) {
                 itemInput = collider.GetComponent<ItemInput>();
                 return;
@@ -92,17 +109,6 @@ public class ConveyorBeltSegment : MonoBehaviour
             //         return;
             //     }
             // }
-
-            if(collider.GetComponent<ConveyorBeltSegment>() != null) {
-                ConveyorBeltSegment potentialNextSegment = collider.GetComponent<ConveyorBeltSegment>();
-                if (!potentialNextSegment.isTaken && globalBeltEnd + transform.right * 0.5f == potentialNextSegment.globalBeltBegin + potentialNextSegment.transform.right * 0.5f)
-                {
-                    nextSegment = potentialNextSegment;
-                    nextSegment.isTaken = true;
-                    Debug.Log("Next segment found");
-                    return;
-                }
-            }
         }
 
         nextSegment = null;
@@ -110,7 +116,7 @@ public class ConveyorBeltSegment : MonoBehaviour
 
     public void AddItem(int itemID)
     {
-        float distanceFromEnd = length;
+        float distanceFromEnd = length - .5f;
     
         GameObject itemObject = CreateItem(itemID);
         if (itemObject != null)
@@ -127,12 +133,12 @@ public class ConveyorBeltSegment : MonoBehaviour
                     previousDistance += itemDistances[i] + 0.5f; // Adjusted
                 }
 
-                itemDistances.Add(length - previousDistance - 0.5f); // Adjusted
-                finalGap = 0;
+                itemDistances.Add(previousDistance - 1f); // Adjusted
             }
 
             itemObject.GetComponent<ItemDataLocal>().id = itemID;
             items.Add(itemObject);
+            finalGap = 0;
     
             if (lastNonZeroGapIndex == -1 && itemDistances[itemDistances.Count - 1] > 0)
             {
