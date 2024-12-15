@@ -18,6 +18,7 @@ public class BuildingPlacement : MonoBehaviour
     public Tilemap resourceTilemap;
     public Tilemap map;
 
+    public UIManager uIManager;
     
 
     //public GameObject beltPrefab;
@@ -126,7 +127,7 @@ public class BuildingPlacement : MonoBehaviour
         position.z = -4;
         GameObject created = Instantiate(buildingType, SnapToGrid(position, grid), hologram.transform.rotation);
         created.name = "building " + buildingType.ToString();
-        created.GetComponent<Building>().SetManager(this);
+        created.GetComponent<Building>().SetManager(this, uIManager);
         created.layer = LayerMask.NameToLayer("Buildings");
         created.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1);
         created.SetActive(true);
