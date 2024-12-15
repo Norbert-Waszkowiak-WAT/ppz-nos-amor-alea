@@ -20,8 +20,8 @@ public class Miner : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        itemOutput = GetComponent<ItemOutput>();
-        itemOutput.Initialize(resourceType);
+        itemOutput = transform.Find("ItemOutput").GetComponent<ItemOutput>();
+        itemOutput.Initialize(resourceType, GetComponent<Building>().manager);
     }
 
     // Update is called once per frame

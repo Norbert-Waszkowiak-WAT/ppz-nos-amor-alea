@@ -1,46 +1,49 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Constructor : MonoBehaviour
+public class Foundry : MonoBehaviour
 {
-    static ConstructorRecipeLoader recipeLoader;
-    ConstructorRecipe selectedRecipe;
-    public ItemOutput itemOutput;
+    static FoundryRecipeLoader recipeLoader;
     public ItemBuffer buffer;
+    FoundryRecipe selectedRecipe;
+    public ItemOutput itemOutput;
     bool isCrafting = false;
-
     [SerializeField] float timer;
 
-    // Start is called before the first frame update
     void Start()
     {
         if(recipeLoader == null)
         {
             FindRecipeLoader();
         }
-        
+
         buffer = GetComponent<ItemBuffer>();
         buffer.itemInputs = new Dictionary<int, int>();
-
+        
         itemOutput = transform.Find("ItemOutput").GetComponent<ItemOutput>();
 
-        selectedRecipe = recipeLoader.GetConstructorRecipe(0);
-        itemOutput.Initialize(selectedRecipe.outputId, GetComponent<Building>().manager);
+        selectedRecipe = recipeLoader.GetFoundryRecipe(0);
 
-        buffer.itemInputs.Add(selectedRecipe.inputId, 0);
+        buffer.itemInputs.Add(selectedRecipe.input1Id, 0);
+        buffer.itemInputs.Add(selectedRecipe.input2Id, 0);
+
+        itemOutput = transform.Find("ItemOutput").GetComponent<ItemOutput>();
+        itemOutput.Initialize(selectedRecipe.outputId, GetComponent<Building>().manager);
     }
 
-    // Update is called once per frame
+        
+
     void Update()
     {
         if(itemOutput.buffer + selectedRecipe.outputAmount >= itemOutput.maxBuffer || isCrafting) {
             return;
         }
-        if (buffer.itemInputs[selectedRecipe.inputId] < selectedRecipe.inputAmount) {
+    
+        if (buffer.itemInputs[selectedRecipe.input1Id] < selectedRecipe.input1Amount || buffer.itemInputs[selectedRecipe.input2Id] < selectedRecipe.input2Amount) {
             return;
         }
+        
         //Debug.Log("Adding to spawner buffer");
         // Start crafting animation
         isCrafting = true;
@@ -52,7 +55,9 @@ public class Constructor : MonoBehaviour
         while (isCrafting) {timer += Time.deltaTime;
             Debug.Log($"Crafting... {timer}/{selectedRecipe.time}");
             if (timer >= selectedRecipe.time) {
-                buffer.itemInputs[selectedRecipe.inputId] -= selectedRecipe.inputAmount;
+
+                buffer.itemInputs[selectedRecipe.input1Id] -= selectedRecipe.input1Amount;
+                buffer.itemInputs[selectedRecipe.input2Id] -= selectedRecipe.input2Amount;
 
                 itemOutput.buffer += selectedRecipe.outputAmount;
                 timer = 0;
@@ -68,7 +73,7 @@ public class Constructor : MonoBehaviour
     {
         if (recipeLoader != null)
         {
-            selectedRecipe = recipeLoader.GetConstructorRecipe(inputId);
+            selectedRecipe = recipeLoader.GetFoundryRecipe(inputId);
             if (selectedRecipe != null)
             {
                 Debug.Log($"Selected Recipe: {selectedRecipe.name}");
@@ -90,7 +95,7 @@ public class Constructor : MonoBehaviour
 
         if (recipeLoaderObject != null)
         {
-            recipeLoader = recipeLoaderObject.GetComponent<ConstructorRecipeLoader>();
+            recipeLoader = recipeLoaderObject.GetComponent<FoundryRecipeLoader>();
         }    
     }
 }

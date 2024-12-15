@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -15,6 +16,7 @@ public class BuildingPlacement : MonoBehaviour
     public bool deleteMode;
     public Grid grid;
     public Tilemap resourceTilemap;
+    public Tilemap map;
 
     
 
@@ -176,7 +178,7 @@ public class BuildingPlacement : MonoBehaviour
                 return;
             } 
             
-            else
+            else if (IsSpaceClear(hologram))
             {
                 // Second click: place the belt segment
                 CreateBelt();
@@ -204,7 +206,15 @@ public class BuildingPlacement : MonoBehaviour
             finalPosition = SnapToAxis(initialPosition, finalPosition);
             PlaceBeltHologram(initialPosition, finalPosition);
             //Debug.Log("is placing belt");
-            IsSpaceClear(hologram);
+            if (IsSpaceClear(hologram))
+            {
+                hologram.GetComponent<SpriteRenderer>().color = new Color(0.2f, 0.2f, 1f, 0.5f);
+                //Debug.Log("Space clear");
+            }
+            else
+            {
+                hologram.GetComponent<SpriteRenderer>().color = new Color(1f, 0.2f, 0.2f, 0.5f);
+            }
         } 
     }
 
@@ -227,6 +237,8 @@ public class BuildingPlacement : MonoBehaviour
         Vector3 direction = end - start;
         beltLength = 1;
         beltLength += (int)Vector3.Distance(start, end);
+
+        hologram.GetComponent<BoxCollider2D>().size = new Vector2(beltLength-0.05f, 0.75f);
 
         hologram.transform.position = start + direction * 0.5f;
 
@@ -252,8 +264,9 @@ public class BuildingPlacement : MonoBehaviour
         }
     }
     bool IsSpaceClear(GameObject building)
-    {  
-        if(building.GetComponent<Collider2D>().OverlapCollider(filter, new Collider2D[1]) == 0)
+    {         
+        List<Collider2D> colliders = new List<Collider2D>();
+        if(building.GetComponent<Collider2D>().OverlapCollider(filter, colliders) == 0)
         {
             if(currentBuildingType != BuildingType.miner) {
                 //Debug.Log("Space clear by collider check");
@@ -271,9 +284,9 @@ public class BuildingPlacement : MonoBehaviour
             //Debug.Log("Resource tile not found under miner: " + minerPosition);
             }
         }
-
         //Debug.Log("Space not clear by default statement");
         return false;
+        
     }
 
     void SwitchBuildingType()
@@ -320,6 +333,7 @@ public class BuildingPlacement : MonoBehaviour
         hologram.transform.localScale = Vector3.one;
 
         hologram.GetComponent<BoxCollider2D>().size = buildingPrefabs[(int)currentBuildingType].GetComponent<BoxCollider2D>().size;
+        hologram.GetComponent<BoxCollider2D>().offset = buildingPrefabs[(int)currentBuildingType].GetComponent<BoxCollider2D>().offset;
 
         hologram.name = "Hologram";
         hologram.layer = LayerMask.NameToLayer("Hologram");

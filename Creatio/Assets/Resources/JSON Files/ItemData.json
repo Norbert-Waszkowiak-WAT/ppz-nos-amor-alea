@@ -9,7 +9,6 @@
     {
         "id": 1,
         "sprite": "Sprites/Items/IronOre",
-        "stackAmount": 100,
         "name": "Iron Ore",
         "description": "Raw iron ore. Can be smelted into iron ingots."
     }
