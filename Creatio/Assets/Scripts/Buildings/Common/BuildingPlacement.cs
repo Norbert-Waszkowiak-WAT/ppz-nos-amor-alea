@@ -17,6 +17,7 @@ public class BuildingPlacement : MonoBehaviour
     public Grid grid;
     public Tilemap resourceTilemap;
     public Tilemap map;
+    public UIManager uIManager;
 
     public UIManager uIManager;
     

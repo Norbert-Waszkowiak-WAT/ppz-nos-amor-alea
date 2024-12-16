@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 
 public class Building : MonoBehaviour
 {
@@ -16,10 +20,17 @@ public class Building : MonoBehaviour
     private SpriteRenderer sprite;
 
     public int numberOfClones;
+<<<<<<< Updated upstream
 
     private bool deleteMode = false;
     private bool groupDeleteMode = false;
     private bool currentDeleteMode = false;
+=======
+    bool deleteMode = false;
+    bool groupDeleteMode = false;
+
+    bool currentDeleteMode = false;
+>>>>>>> Stashed changes
     private List<GameObject> clones = new List<GameObject>();  // Lista przechowująca klony
 
     void Start()
@@ -30,11 +41,14 @@ public class Building : MonoBehaviour
             menu.onClick.RemoveAllListeners(); 
             menu.onClick.AddListener(OpenUI); 
         }
+<<<<<<< Updated upstream
     }
 
     public class FoundryRecipeList
     {
         public List<FoundryRecipe> recipes = new List<FoundryRecipe>();
+=======
+>>>>>>> Stashed changes
     }
 
     void Update()
@@ -77,6 +91,20 @@ public class Building : MonoBehaviour
 
             clones.Clear();
         }
+<<<<<<< Updated upstream
+=======
+    }
+
+        private void ResetDeleteModes()
+    {
+        deleteMode = false;
+        groupDeleteMode = false;
+        if (manager.deleteMode != currentDeleteMode)
+        {
+            sprite.color = new Color(1f, 1f, 1f, 1f);
+            currentDeleteMode = manager.deleteMode;
+        }
+>>>>>>> Stashed changes
     }
 
     private void ResetDeleteModes()
@@ -89,7 +117,12 @@ public class Building : MonoBehaviour
             currentDeleteMode = manager.deleteMode;
         }
     }
-
+    public void SetManager(BuildingPlacement reference, UIManager uimanager)
+    {
+        manager = reference;
+        button = uimanager.myButton;
+        menu = uimanager.Menu;
+    }
     private void OnMouseEnter()
     {
         if (manager != null && manager.deleteMode)
@@ -101,7 +134,10 @@ public class Building : MonoBehaviour
             }
         }
     }
-
+    private void HighlightBuilding()
+    {
+        sprite.color = new Color(0.8f, 0.8f, 0.8f, 0.8f);
+    }
     private void OnMouseOver()
     {
         if (manager == null) return;
@@ -144,6 +180,94 @@ public class Building : MonoBehaviour
         button = uimanager.myButton;
         menu = uimanager.Menu;
     }
+    public void OpenMenu(){
+        menu.gameObject.SetActive(true);
+    }
+
+    public void OpenUI()
+{
+    if (button != null && clones.Count == 0)
+    {
+        button.gameObject.SetActive(false);
+
+        numberOfClones = 5;
+        float spacing = (100f / numberOfClones) * 2.5f;
+
+        for (int i = 0; i < numberOfClones; i++)
+        {
+            GameObject clone = Instantiate(button.gameObject);
+            if (clone == null)
+            {
+                Debug.LogError($"Failed to create clone {i}");
+                continue;
+            }
+
+            clone.transform.SetParent(button.transform.parent);
+            clone.transform.localScale = button.transform.localScale;
+            clone.transform.position = button.transform.position + new Vector3(0f, -i * spacing, 0f);
+            clone.gameObject.SetActive(true);
+
+            TMP_Text buttonText = clone.GetComponentInChildren<TMP_Text>();
+            if (buttonText != null)
+            {
+                buttonText.text = $"Przepis {i + 1}";
+            }
+            else
+            {
+                Debug.LogWarning($"Clone {i} is missing a TMP_Text component!");
+            }
+
+            Button cloneButton = clone.GetComponent<Button>();
+            if (cloneButton != null)
+            {
+                string recipeName = $"Przepis {i + 1}";
+                cloneButton.onClick.AddListener(() => SelectRecipe(recipeName));
+            }
+            else
+            {
+                Debug.LogWarning($"Clone {i} is missing a Button component!");
+            }
+
+            clones.Add(clone);
+        }
+    }
+    else if (button == null)
+    {
+        Debug.LogWarning("Button is not assigned!");
+    }
+}
+
+    private void SelectRecipe(string recipeName)
+{
+    Debug.Log($"Selected recipe: {recipeName}");
+
+    if (menu != null)
+    {
+        TMP_Text menuText = menu.GetComponentInChildren<TMP_Text>();
+        if (menuText != null)
+        {
+            menuText.text = recipeName;
+        }
+        else
+        {
+            Debug.LogWarning("Menu does not have a TMP_Text component!");
+        }
+    }
+    else
+    {
+        Debug.LogWarning("Menu is not assigned!");
+    }
+
+    foreach (var clone in clones)
+    {
+        if (clone != null)
+        {
+            Destroy(clone);
+        }
+    }
+    clones.Clear();
+}
+
 
     public void SetManager(BuildingPlacement reference)
     {
