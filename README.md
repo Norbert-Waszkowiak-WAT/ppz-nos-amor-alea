@@ -94,3 +94,11 @@ Narzędzia:
 
 System Budowania i usuwania, proceduralna generacja mapy
 
+**Koniec etapu 2**
+![ui manager clasi](https://github.com/user-attachments/assets/e54547fb-c914-443a-9903-159e465a9fc5)
+![Zrzut ekranu 2024-12-16 110932](https://github.com/user-attachments/assets/dc3f0537-19d1-410f-aff8-9524642329b9)
+
+User Interface - częściowy, przedmioty są wydobywane za pomocą koparki, postawionej na miejscu występowania złoża. Gracz jedzie po taśmie. Układ koparka - taśma.
+
+
+
