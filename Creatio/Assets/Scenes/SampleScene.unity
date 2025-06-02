@@ -1136,9 +1136,9 @@ MonoBehaviour:
   closeCartButton: {fileID: 1551645386}
   cartContentParent: {fileID: 943008285}
   cartItemPrefab: {fileID: 477293852}
-  gen1Sprite: {fileID: 0}
-  gen2Sprite: {fileID: 0}
-  gen3Sprite: {fileID: 0}
+  gen1Sprite: {fileID: 21300000, guid: 0e8d8c0b4e305dc489a383b1c4e09b35, type: 3}
+  gen2Sprite: {fileID: 21300000, guid: 5db486748156a204f8d0d9292cab6669, type: 3}
+  gen3Sprite: {fileID: 21300000, guid: 2fa639a271d862e4aa213ee2e47d40c1, type: 3}
 --- !u!1 &851238672
 GameObject:
   m_ObjectHideFlags: 0
