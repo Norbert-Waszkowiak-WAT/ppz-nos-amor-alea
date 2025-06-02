@@ -1,43 +1,47 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-
+using UnityEngine.UI;
+using TMPro;
 
 public class Building : MonoBehaviour
 {
     public BuildingPlacement manager;
+    public Button button;
+    public Button menu;
+    public GameObject closeUIButtonPrefab;
+    public Button CloseUIButton;
+    public GameObject recipseclone;
+    private SpriteRenderer sprite;
 
-    bool deleteMode = false;
-    bool groupDeleteMode = false;
-    SpriteRenderer sprite;
+    public int numberOfClones;
+    private bool deleteMode = false;
+    private bool groupDeleteMode = false;
+    private bool currentDeleteMode = false;
+    public string nameofbuild;
 
-    bool currentDeleteMode = false;
+    private List<GameObject> clones = new List<GameObject>();
 
-    // Start is called before the first frame update
     void Start()
     {
         sprite = GetComponent<SpriteRenderer>();
+        if (menu != null)
+        {
+            menu.onClick.RemoveAllListeners(); 
+            menu.onClick.AddListener(OpenUI); 
+        }
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if(manager == null) return;
-        
-        if(!manager.buildMode)
+        if (manager == null) return;
+
+        if (!manager.buildMode)
         {
             if (!manager.deleteMode)
             {
-                deleteMode = false;
-                groupDeleteMode = false;
-                if(manager.deleteMode != currentDeleteMode)
-                {
-                    sprite.color = new Color(1f, 1f, 1f, 1f);
-                    currentDeleteMode = manager.deleteMode;
-                }
+                ResetDeleteModes();
             }
-
             else if (deleteMode || groupDeleteMode)
             {
                 sprite.color = new Color(0.5f, 0.5f, 0.5f, 1f);
@@ -46,17 +50,30 @@ public class Building : MonoBehaviour
                     Destroy(gameObject);
                 }
             }
-
-            // else 
-            // {
-            //     sprite.color = new Color(1f, 1f, 1f, 1f);
-            // }
         }
 
+        if (Input.GetKeyDown(KeyCode.Q))
+        {   
+            CloseMenu();
+        }
     }
 
-    public void SetManager(BuildingPlacement reference) {
+    private void ResetDeleteModes()
+    {
+        deleteMode = false;
+        groupDeleteMode = false;
+        if (manager.deleteMode != currentDeleteMode)
+        {
+            sprite.color = Color.white;
+            currentDeleteMode = manager.deleteMode;
+        }
+    }
+
+    public void SetManager(BuildingPlacement reference, UIManager uimanager)
+    {
         manager = reference;
+        button = uimanager.myButton;
+        menu = uimanager.Menu;
     }
 
     private void OnMouseEnter()
@@ -71,50 +88,128 @@ public class Building : MonoBehaviour
         }
     }
 
+    private void HighlightBuilding()
+    {
+        sprite.color = new Color(0.8f, 0.8f, 0.8f, 0.8f);
+    }
+
     private void OnMouseOver()
     {
-        if(manager == null) return;
+        if (manager == null) return;
 
-        if(!manager.buildMode && !manager.deleteMode)
+        if (!manager.buildMode && !manager.deleteMode)
         {
-            Debug.Log("Building.cs: OnMouseOver");
-            sprite.color = new Color(0.5f, 1f, 0.5f, 1f); 
+            HighlightBuilding();
             if (Input.GetMouseButtonDown(1))
             {
-                //OpenUI();
+                OpenMenu(); 
             }
         }
 
         if (manager.deleteMode)
         {
             deleteMode = true;
-            if (Input.GetKey(KeyCode.LeftControl))
-            {
-                groupDeleteMode = true;
-            }
-            if (Input.GetKey(KeyCode.LeftAlt))
-            {
-                groupDeleteMode = false;
-            }
+            groupDeleteMode = Input.GetKey(KeyCode.LeftControl);
         }
     }
+
     private void OnMouseExit()
     {
         if (!groupDeleteMode)
         {
             deleteMode = false;
-            sprite.color = new Color(1f, 1f, 1f, 1f); 
+            sprite.color = Color.white;
         }
     }
 
-    public void SetDeleteMode(bool mode)
+    public void OpenMenu()
     {
-        deleteMode = mode;
+        Debug.Log("Menu Opened");
+        if (menu != null)
+        {
+            menu.gameObject.SetActive(true);
+        }
+        
     }
 
-    public void SetGroupDeleteMode(bool mode)
+    public void CloseMenu()
     {
-        groupDeleteMode = mode;
+        if (menu != null)
+        {
+            menu.gameObject.SetActive(false);
+        }
+        if (button != null)
+        {
+            button.gameObject.SetActive(false);
+        }
+        foreach (var clone in clones)
+        {
+            if (clone != null)
+            {
+                Destroy(clone);
+            }
+        }
+        clones.Clear();
     }
 
+    public void OpenUI()
+{
+    if (button != null && clones.Count == 0)
+    {
+        button.gameObject.SetActive(false);
+        nameofbuild = gameObject.name;
+        Debug.Log($"Opening UI for building: {nameofbuild}");
+
+        if (nameofbuild == "Constructor")
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                GameObject newButton = Instantiate(closeUIButtonPrefab); 
+                newButton.transform.SetParent(menu.transform); 
+                newButton.SetActive(true); 
+                clones.Add(newButton); 
+                Debug.Log("Constructor");
+            }
+        }
+        if (nameofbuild == "Foundry")
+        {
+            GameObject newButton = Instantiate(closeUIButtonPrefab); 
+            newButton.transform.SetParent(menu.transform); 
+            newButton.SetActive(true); 
+            clones.Add(newButton);
+            Debug.Log("Foundry");
+        }
+    }
+}
+
+    private void SelectRecipe(string recipeName)
+    {
+        Debug.Log($"Selected recipe: {recipeName}");
+
+        if (menu != null)
+        {
+            TMP_Text menuText = menu.GetComponentInChildren<TMP_Text>();
+            if (menuText != null)
+            {
+                menuText.text = recipeName;
+            }
+            else
+            {
+                Debug.LogWarning("Menu does not have a TMP_Text component!");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("Menu is not assigned!");
+        }
+
+        foreach (var clone in clones)
+        {
+            if (clone != null)
+            {
+                Destroy(clone);
+            }
+        }
+        clones.Clear();
+    }
 }

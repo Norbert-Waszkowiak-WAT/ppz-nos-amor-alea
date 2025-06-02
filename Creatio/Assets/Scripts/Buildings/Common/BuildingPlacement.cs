@@ -12,6 +12,8 @@ public class BuildingPlacement : MonoBehaviour
     public UnityEngine.Events.UnityEvent BuildingPlaced;
     //public UnityEngine.Events.UnityEvent BeltsModified;
 
+    public UIManager uIManager;
+
     public bool buildMode;
     public bool deleteMode;
     public Grid grid;
@@ -126,7 +128,7 @@ public class BuildingPlacement : MonoBehaviour
         position.z = -4;
         GameObject created = Instantiate(buildingType, SnapToGrid(position, grid), hologram.transform.rotation);
         created.name = "building " + buildingType.ToString();
-        created.GetComponent<Building>().SetManager(this);
+        created.GetComponent<Building>().SetManager(this, uIManager);
         created.layer = LayerMask.NameToLayer("Buildings");
         created.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1);
         created.SetActive(true);
@@ -153,7 +155,7 @@ public class BuildingPlacement : MonoBehaviour
         createdBelt.name = BuildingType.belt.ToString();
         createdBelt.layer = LayerMask.NameToLayer("ConveyorBelts");
 
-        createdBelt.GetComponent<Building>().SetManager(this);
+        createdBelt.GetComponent<Building>().SetManager(this, uIManager);
         createdBelt.GetComponent<ConveyorBeltSegment>().Initialize(this, beltLength);
     }
 
